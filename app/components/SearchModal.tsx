@@ -4,13 +4,30 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "../lib/firebase";
-import { collection, getDocs, limit, orderBy, query /*, where*/ } from "firebase/firestore";
+import {
+  collection,
+  endAt,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAt,
+} from "firebase/firestore";
 
 type Result = {
   id: string;
   title: string;
   price: number;
   image?: string;
+  slug?: string;
+};
+
+type ProductDoc = {
+  title?: string;
+  titleLower?: string;
+  price?: number;
+  image?: string;
+  slug?: string;
 };
 
 function useDebounced<T>(value: T, ms = 300) {
@@ -22,14 +39,6 @@ function useDebounced<T>(value: T, ms = 300) {
   return v;
 }
 
-// normaliza: trim, minúsculas y sin acentos
-const fold = (s: string) =>
-  s
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-
 export default function SearchModal({
   open,
   onClose,
@@ -39,13 +48,11 @@ export default function SearchModal({
 }) {
   const [qtext, setQtext] = useState("");
   const debounced = useDebounced(qtext, 300);
-
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Result[]>([]);
-  const [pool, setPool] = useState<Result[] | null>(null); // productos cargados una vez
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // ESC para cerrar
+  // cierra con ESC
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -53,7 +60,7 @@ export default function SearchModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // foco al abrir y reset al cerrar
+  // foco al abrir
   useEffect(() => {
     if (open) setTimeout(() => inputRef.current?.focus(), 50);
     else {
@@ -62,26 +69,28 @@ export default function SearchModal({
     }
   }, [open]);
 
-  // 1) cargar un pool de productos una vez (sin campos extra)
+  // consulta Firestore (case-insensitive usando titleLower)
   useEffect(() => {
-    if (!open) return;
-    if (pool) return; // ya cargado
-    (async () => {
+    const run = async () => {
+      const term = debounced.trim().toLowerCase();
+      if (!open) return;
+      if (!term) {
+        setResults([]);
+        return;
+      }
       setLoading(true);
       const col = collection(db, "products");
       const snap = await getDocs(
         query(
           col,
-          // si querés filtrar "solo activos", descomentá la línea de abajo y
-          // si te pide índice, seguí el link que te da Firestore:
-          // where("active", "==", true),
-          orderBy("createdAt", "desc"),
-          limit(999) // ajustá según tu catálogo
+          orderBy("titleLower"),
+          startAt(term),
+          endAt(term + "\uf8ff"),
+          limit(20)
         )
       );
-
-      const all: Result[] = snap.docs.map((d) => {
-        const data = d.data() as any;
+      const list: Result[] = snap.docs.map((d) => {
+        const data = d.data() as ProductDoc;
         return {
           id: d.id,
           title: data.title ?? "Producto",
@@ -90,27 +99,11 @@ export default function SearchModal({
           slug: data.slug,
         };
       });
-      setPool(all);
+      setResults(list);
       setLoading(false);
-    })();
-  }, [open, pool]);
-
-  // 2) filtrar en memoria por texto (case-insensitive y sin acentos)
-  useEffect(() => {
-    if (!open) return;
-    const term = fold(debounced);
-    if (!term) {
-      setResults([]);
-      return;
-    }
-    if (!pool) {
-      setLoading(true);
-      return;
-    }
-    setLoading(false);
-    const filtered = pool.filter((p) => fold(p.title).includes(term));
-    setResults(filtered.slice(0, 20)); // tope de resultados visibles
-  }, [debounced, open, pool]);
+    };
+    run();
+  }, [debounced, open]);
 
   if (!open) return null;
 
@@ -130,7 +123,11 @@ export default function SearchModal({
             placeholder="Buscar productos…"
             className="flex-1 outline-none py-1.5"
           />
-          <button onClick={onClose} className="rounded-md px-2 py-1 text-sm hover:bg-gray-100" aria-label="Cerrar">
+          <button
+            onClick={onClose}
+            className="rounded-md px-2 py-1 text-sm hover:bg-gray-100"
+            aria-label="Cerrar"
+          >
             Esc
           </button>
         </div>
@@ -145,12 +142,21 @@ export default function SearchModal({
           ) : (
             <ul className="divide-y">
               {results.map((r) => {
-                const href = `/producto/${r.id}`;
+                const href = `/producto/${r.slug ?? r.id}`;
                 return (
                   <li key={r.id}>
-                    <Link href={href} className="flex items-center gap-3 p-2 hover:bg-gray-50" onClick={onClose}>
+                    <Link
+                      href={href}
+                      className="flex items-center gap-3 p-2 hover:bg-gray-50"
+                      onClick={onClose}
+                    >
                       <div className="relative h-12 w-12 overflow-hidden rounded-md bg-gray-100">
-                        <Image src={r.image || "/img/placeholder.png"} alt={r.title} fill className="object-cover" />
+                        <Image
+                          src={r.image || "/img/placeholder.png"}
+                          alt={r.title}
+                          fill
+                          className="object-cover"
+                        />
                       </div>
                       <div className="min-w-0">
                         <div className="truncate font-medium">{r.title}</div>

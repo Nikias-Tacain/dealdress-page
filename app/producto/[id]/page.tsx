@@ -1,11 +1,11 @@
 // app/producto/[id]/page.tsx
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { db } from "../../lib/firebase";
-import { collection, doc, getDoc, getDocs, limit, query, where, orderBy } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 
 import { useCartStore } from "../../store/useCart";
 import { toast } from "sonner";
@@ -19,7 +19,19 @@ type Product = {
   description?: string;
   colors?: string[];
   sizes?: Record<string, number>;
-  category?: string; // para relacionados
+  category?: string;
+};
+
+type ProductDoc = {
+  title?: string;
+  price?: number;
+  image?: string;
+  images?: string[];
+  description?: string;
+  colors?: string[];
+  sizes?: Record<string, number>;
+  category?: string;
+  slug?: string;
 };
 
 type Related = { id: string; title: string; price: number; image?: string; slug?: string };
@@ -28,8 +40,10 @@ const LETTER_ORDER = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 function compareSizes(a: string, b: string) {
   const ai = LETTER_ORDER.indexOf(a.toUpperCase());
   const bi = LETTER_ORDER.indexOf(b.toUpperCase());
-  const aNum = Number(a), bNum = Number(b);
-  const aIsNum = !Number.isNaN(aNum), bIsNum = !Number.isNaN(bNum);
+  const aNum = Number(a),
+    bNum = Number(b);
+  const aIsNum = !Number.isNaN(aNum),
+    bIsNum = !Number.isNaN(bNum);
   if (ai !== -1 && bi !== -1) return ai - bi;
   if (aIsNum && bIsNum) return aNum - bNum;
   if (ai !== -1 && bIsNum) return -1;
@@ -40,7 +54,7 @@ function compareSizes(a: string, b: string) {
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
 
-  const addItem  = useCartStore((s) => s.addItem);
+  const addItem = useCartStore((s) => s.addItem);
   const openCart = useCartStore((s) => s.openCart);
 
   const [p, setP] = useState<Product | null>(null);
@@ -52,7 +66,7 @@ export default function ProductDetailPage() {
   const [color, setColor] = useState<string | null>(null);
   const [size, setSize] = useState<string | null>(null);
 
-  // estado del botón
+  // botón "estado visual"
   const [addState, setAddState] = useState<"idle" | "adding" | "added">("idle");
 
   // relacionados
@@ -72,9 +86,8 @@ export default function ProductDetailPage() {
   }, [p?.sizes, size]);
 
   const maxQty = Math.min(10, stockForSelected);
-  const clampQty = (n: number) => Math.max(1, Math.min(maxQty || 1, Math.floor(n)));
 
-  // cargar producto + relacionados
+  // cargar producto y relacionados
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -86,7 +99,7 @@ export default function ProductDetailPage() {
 
       let prod: Product | null = null;
       if (snap.exists()) {
-        const data = snap.data() as any;
+        const data = snap.data() as ProductDoc;
         prod = {
           id: snap.id,
           title: data.title ?? "Producto",
@@ -104,7 +117,7 @@ export default function ProductDetailPage() {
         const qs = await getDocs(q);
         if (!qs.empty) {
           const d = qs.docs[0];
-          const data = d.data() as any;
+          const data = d.data() as ProductDoc;
           prod = {
             id: d.id,
             title: data.title ?? "Producto",
@@ -129,21 +142,16 @@ export default function ProductDetailPage() {
       }
       setLoading(false);
 
-      // relacionados (misma categoría)
+      // relacionados
       if (prod?.category) {
         setLoadingRelated(true);
         try {
           const col = collection(db, "products");
-          const rq = query(
-            col,
-            where("category", "==", prod.category),
-            orderBy("createdAt", "desc"),
-            limit(8)
-          );
+          const rq = query(col, where("category", "==", prod.category), orderBy("createdAt", "desc"), limit(8));
           const rs = await getDocs(rq);
           const list: Related[] = rs.docs
             .map((d) => {
-              const data = d.data() as any;
+              const data = d.data() as ProductDoc;
               return {
                 id: d.id,
                 title: data.title ?? "Producto",
@@ -163,10 +171,15 @@ export default function ProductDetailPage() {
         setRelated([]);
       }
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [id]);
 
-  useEffect(() => { setQty((q) => clampQty(q)); }, [maxQty]);
+  // mantener qty acotada a (1..maxQty) ante cambios
+  useEffect(() => {
+    setQty((q) => Math.max(1, Math.min(maxQty || 1, Math.floor(q))));
+  }, [maxQty]);
 
   if (loading) {
     return (
@@ -200,9 +213,7 @@ export default function ProductDetailPage() {
   const baseBtn =
     "flex-1 rounded-full py-3 font-medium text-white transition-colors transition-transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-black/20";
   const btnClass =
-    addState === "added"
-      ? `${baseBtn} bg-green-600 hover:bg-green-600`
-      : `${baseBtn} bg-black hover:opacity-90`;
+    addState === "added" ? `${baseBtn} bg-green-600 hover:bg-green-600` : `${baseBtn} bg-black hover:opacity-90`;
 
   return (
     <main className="min-h-dvh bg-[#e6d8d6]">
@@ -221,7 +232,7 @@ export default function ProductDetailPage() {
                     key={i}
                     onClick={() => setActiveIdx(i)}
                     className={`relative aspect-square overflow-hidden rounded-lg border ${
-                      i === activeIdx ? "border-black" : "border-gray-200"
+                      i === activeIdx ? "border-black" : "border-gray-2 00"
                     }`}
                     aria-label={`Ver imagen ${i + 1}`}
                   >
@@ -299,16 +310,21 @@ export default function ProductDetailPage() {
             <div className="mt-5">
               <div className="text-sm font-medium mb-2">Cantidad</div>
               <div className="inline-flex items-center rounded-full border overflow-hidden">
-                <button onClick={() => setQty((q) => clampQty(q - 1))} className="px-3 py-2">−</button>
+                <button onClick={() => setQty((q) => Math.max(1, Math.min((maxQty || 1), Math.floor(q - 1))))} className="px-3 py-2">−</button>
                 <input
                   type="number"
                   min={1}
                   max={maxQty || 1}
                   value={qty}
-                  onChange={(e) => setQty(clampQty(Number(e.target.value || 1)))}
+                  onChange={(e) =>
+                    setQty((_) => {
+                      const n = Number(e.target.value || 1);
+                      return Math.max(1, Math.min((maxQty || 1), Math.floor(n)));
+                    })
+                  }
                   className="w-14 text-center outline-none py-2"
                 />
-                <button onClick={() => setQty((q) => clampQty(q + 1))} className="px-3 py-2">+</button>
+                <button onClick={() => setQty((q) => Math.max(1, Math.min((maxQty || 1), Math.floor(q + 1))))} className="px-3 py-2">+</button>
               </div>
               <p className="text-xs text-gray-600 mt-1">
                 Máximo {maxQty} {maxQty === 1 ? "unidad" : "unidades"}
@@ -316,30 +332,19 @@ export default function ProductDetailPage() {
               </p>
             </div>
 
-            {/* Botón: Agregar al carrito */}
+            {/* Botón agregar */}
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
               <button
                 className={btnClass}
-                disabled={(p.sizes ? !size || stockForSelected === 0 : false) || addState === "adding"}
+                disabled={sizeBlocked || addState === "adding"}
                 onClick={() => {
-                  if (p.sizes && !size) {
+                  if (sizeBlocked) {
                     toast.error("Elegí un talle antes de agregar 🙏");
                     return;
                   }
                   setAddState("adding");
-
-                  const img = gallery[activeIdx] || p.image || "/img/placeholder.png";
-                  addItem({
-                    id: p.id,
-                    title: p.title,
-                    price: p.price,
-                    image: img,
-                    qty,
-                    color,
-                    size,
-                    maxStock: p.sizes ? stockForSelected : 10, // ⬅️ tope que viaja al carrito
-                  });
-
+                  const img = mainSrc;
+                  addItem({ id: p.id, title: p.title, price: p.price, image: img, qty, color, size });
                   setAddState("added");
                   toast.success("Producto agregado al carrito", {
                     action: { label: "Ver carrito", onClick: openCart },
@@ -369,7 +374,7 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            {/* Tabla de talles (disponibilidad) */}
+            {/* Tabla de talles */}
             {p.sizes && sizeKeys.length > 0 && (
               <div className="mt-8">
                 <h2 className="font-semibold mb-3">Tabla de talles</h2>
@@ -391,9 +396,13 @@ export default function ProductDetailPage() {
                             <td className="px-4 py-2">{stock}</td>
                             <td className="px-4 py-2">
                               {stock > 0 ? (
-                                <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-700">Disponible</span>
+                                <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-700">
+                                  Disponible
+                                </span>
                               ) : (
-                                <span className="inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5 text-rose-700">Sin stock</span>
+                                <span className="inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5 text-rose-700">
+                                  Sin stock
+                                </span>
                               )}
                             </td>
                           </tr>
@@ -403,14 +412,14 @@ export default function ProductDetailPage() {
                   </table>
                 </div>
                 <p className="mt-2 text-xs text-gray-500">
-                  * Si tenés dudas con el talle, escribinos por WhatsApp y te ayudamos 🙂
+                  * Si tenés dudas con el talle, escribinos por WhatsApp 🙂
                 </p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Productos relacionados */}
+        {/* Relacionados */}
         <div className="mt-12">
           <h2 className="text-xl md:text-2xl font-bold mb-4">
             {p.category ? `Más de ${p.category}` : "Productos relacionados"}

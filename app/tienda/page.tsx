@@ -1,21 +1,49 @@
+// app/tienda/page.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { db } from "../lib/firebase";
 import {
-  collection, query, where, orderBy, limit, getDocs, startAfter,
-  DocumentData, QueryDocumentSnapshot
+  collection,
+  DocumentData,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  Query,
+  QueryDocumentSnapshot,
+  startAfter,
+  where,
 } from "firebase/firestore";
 import ProductCard, { Product } from "../components/ProductCard";
 
+type ProductDoc = {
+  title?: string;
+  price?: number;
+  image?: string;
+  slug?: string;
+  createdAt?: unknown;
+  category?: string;
+};
+
 const PAGE_SIZE = 12;
 
+/** -------- PÁGINA (envuelve al componente que usa useSearchParams) -------- */
 export default function TiendaPage() {
+  return (
+    <Suspense fallback={<TiendaSkeleton />}>
+      <TiendaInner />
+    </Suspense>
+  );
+}
+
+/** -------- Componente que SÍ usa useSearchParams -------- */
+function TiendaInner() {
   const sp = useSearchParams();
-  const categoria = sp.get("categoria"); // ej: ?categoria=deportivo
+  const categoria = sp.get("categoria");
 
   const [items, setItems] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,15 +51,11 @@ export default function TiendaPage() {
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [noMore, setNoMore] = useState(false);
 
-  const baseQuery = useMemo(() => {
+  const baseQuery: Query<DocumentData> = useMemo(() => {
     const col = collection(db, "products");
-    // Estructura esperada en Firestore: { title, price, image, category, slug }
-    const clauses = [
-      categoria ? where("category", "==", categoria) : null,
-      orderBy("createdAt", "desc"),
-      limit(PAGE_SIZE),
-    ].filter(Boolean) as any[];
-    return query(col, ...clauses);
+    return categoria
+      ? query(col, where("category", "==", categoria), orderBy("createdAt", "desc"), limit(PAGE_SIZE))
+      : query(col, orderBy("createdAt", "desc"), limit(PAGE_SIZE));
   }, [categoria]);
 
   useEffect(() => {
@@ -41,11 +65,12 @@ export default function TiendaPage() {
       setNoMore(false);
       setLastDoc(null);
       setItems([]);
+
       const snap = await getDocs(baseQuery);
       if (!mounted) return;
 
       const list: Product[] = snap.docs.map((d) => {
-        const data = d.data() as any;
+        const data = d.data() as ProductDoc;
         return {
           id: d.id,
           title: data.title ?? "Producto",
@@ -54,6 +79,7 @@ export default function TiendaPage() {
           slug: data.slug,
         };
       });
+
       setItems(list);
       setLastDoc(snap.docs.length ? snap.docs[snap.docs.length - 1] : null);
       setNoMore(snap.docs.length < PAGE_SIZE);
@@ -67,17 +93,16 @@ export default function TiendaPage() {
   const loadMore = async () => {
     if (!lastDoc || loadingMore) return;
     setLoadingMore(true);
+
     const col = collection(db, "products");
-    const clauses = [
-      categoria ? where("category", "==", categoria) : null,
-      orderBy("createdAt", "desc"),
-      startAfter(lastDoc),
-      limit(PAGE_SIZE),
-    ].filter(Boolean) as any[];
-    const snap = await getDocs(query(col, ...clauses));
+    const q2: Query<DocumentData> = categoria
+      ? query(col, where("category", "==", categoria), orderBy("createdAt", "desc"), startAfter(lastDoc), limit(PAGE_SIZE))
+      : query(col, orderBy("createdAt", "desc"), startAfter(lastDoc), limit(PAGE_SIZE));
+
+    const snap = await getDocs(q2);
 
     const more: Product[] = snap.docs.map((d) => {
-      const data = d.data() as any;
+      const data = d.data() as ProductDoc;
       return {
         id: d.id,
         title: data.title ?? "Producto",
@@ -95,54 +120,32 @@ export default function TiendaPage() {
 
   return (
     <main className="min-h-dvh bg-[#e6d8d6] text-gray-900">
-      {/* Hero simple de tienda (opcional, podés borrar) */}
-      <section className="w-full">
-  <div className="mx-auto max-w-[1300px]">
-    <Image
-      src="/hero-tienda.png"
-      alt="Tienda"
-      width={1800}
-      height={480}
-      className="w-full h-auto block"
-      sizes="(max-width: 1100px) 100vw, 1100px"
-      priority
-    />
-  </div>
-</section>
-
+      {/* Hero simple de tienda */}
+      <section className="relative w-full">
+        <Image src="/hero-tienda.png" alt="Tienda" width={1920} height={480} className="w-full h-auto" priority />
+      </section>
 
       <section className="mx-auto max-w-6xl px-4 py-8 md:py-12">
         <header className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <h1 className="text-2xl md:text-3xl font-bold">Tienda</h1>
 
-          {/* Filtro por categoría vía querystring */}
-        <div className="flex items-center gap-2 text-sm">
-  <span className="opacity-70">Categoría:</span>
-  <div className="flex gap-2">
-    <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${!categoria ? "bg-black text-white" : "bg-white"}`} href="/tienda">Todas</Link>
-    <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="deportivo"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=deportivo">Deportivo</Link>
-    <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="calzado"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=calzado">Calzado</Link>
-    <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="bolsos"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=bolsos">Bolsos</Link>
-    <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="mochilas"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=mochilas">Mochilas</Link>
-    <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="promos"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=promos">Promociones </Link>
-  </div>
-</div>
-
+          {/* Filtro por categoría */}
+          <div className="flex items-center gap-2 text-sm">
+            <span className="opacity-70">Categoría:</span>
+            <div className="flex gap-2">
+              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${!categoria ? "bg-black text-white" : "bg-white"}`} href="/tienda">Todas</Link>
+              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="deportivo"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=deportivo">Deportivo</Link>
+              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="calzado"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=calzado">Calzado</Link>
+              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="bolsos"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=bolsos">Bolsos</Link>
+              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="mochilas"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=mochilas">Mochilas</Link>
+              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="promos"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=promos">Promos</Link>
+            </div>
+          </div>
         </header>
 
         {/* Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {Array.from({ length: PAGE_SIZE }).map((_, i) => (
-              <div key={i} className="rounded-xl bg-white p-3 md:p-4 shadow-sm animate-pulse">
-                <div className="aspect-square rounded-lg bg-gray-200" />
-                <div className="mt-3 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-2/3" />
-                  <div className="h-3 bg-gray-200 rounded w-1/3" />
-                </div>
-              </div>
-            ))}
-          </div>
+          <TiendaGridSkeleton />
         ) : (
           <>
             {items.length === 0 ? (
@@ -153,7 +156,6 @@ export default function TiendaPage() {
               </div>
             )}
 
-            {/* Ver más */}
             {!noMore && items.length > 0 && (
               <div className="mt-8 flex justify-center">
                 <button
@@ -174,5 +176,36 @@ export default function TiendaPage() {
         )}
       </section>
     </main>
+  );
+}
+
+/** -------- Fallbacks/Skeletons -------- */
+function TiendaSkeleton() {
+  return (
+    <main className="min-h-dvh bg-[#e6d8d6] text-gray-900">
+      <section className="relative w-full">
+        <div className="w-full h-[240px] md:h-[320px] bg-gray-200 animate-pulse" />
+      </section>
+      <section className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+        <div className="h-8 w-40 bg-gray-200 rounded mb-6 animate-pulse" />
+        <TiendaGridSkeleton />
+      </section>
+    </main>
+  );
+}
+
+function TiendaGridSkeleton() {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+      {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+        <div key={i} className="rounded-xl bg-white p-3 md:p-4 shadow-sm animate-pulse">
+          <div className="aspect-square rounded-lg bg-gray-200" />
+          <div className="mt-3 space-y-2">
+            <div className="h-4 bg-gray-200 rounded w-2/3" />
+            <div className="h-3 bg-gray-200 rounded w-1/3" />
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }

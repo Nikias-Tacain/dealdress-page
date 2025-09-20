@@ -1,11 +1,11 @@
 /* app/page.tsx */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "./lib/firebase";
-import { collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
+import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 
 type Category = { id: string; title: string; image: string; href: string };
 type Promo = {
@@ -16,6 +16,15 @@ type Promo = {
   slug?: string;
 };
 
+type ProductDoc = {
+  title?: string;
+  price?: number;
+  image?: string;
+  slug?: string;
+  category?: string;
+  createdAt?: unknown;
+};
+
 const categories: Category[] = [
   { id: "deportivo", title: "DEPORTIVO", image: "/categoria-deportivo.png", href: "/tienda?categoria=deportivo" },
   { id: "calzado", title: "CALZADO", image: "/categoria-calzado.png", href: "/tienda?categoria=calzado" },
@@ -24,7 +33,6 @@ const categories: Category[] = [
 ];
 
 export default function Home() {
-  // ⬇️ Los hooks van DENTRO del componente
   const [promos, setPromos] = useState<Promo[]>([]);
   const [loadingPromos, setLoadingPromos] = useState(true);
 
@@ -40,7 +48,7 @@ export default function Home() {
       );
       const snap = await getDocs(q);
       const list: Promo[] = snap.docs.map((d) => {
-        const data = d.data() as any;
+        const data = d.data() as ProductDoc;
         return {
           id: d.id,
           title: data.title ?? "Producto",
@@ -57,28 +65,32 @@ export default function Home() {
   return (
     <main className="min-h-dvh bg-[#e6d8d6] text-gray-900">
       {/* HERO */}
-<section className="w-full">
-  <div className="mx-auto max-w-[1300px]">
-    <Image
-      src="/hero.svg"
-      alt="Banner"
-      width={1800}
-      height={480}
-      className="w-full h-auto block"
-      sizes="(max-width: 1100px) 100vw, 1100px"
-      priority
-    />
-  </div>
-</section>
+      <section className="relative">
+        <Image
+          src="/hero.svg"
+          alt="Banner"
+          width={1920}
+          height={640}
+          className="w-full h-auto"
+          priority
+        />
+      </section>
 
-      {/* CATEGORIES 2x2 */}
+      {/* CATEGORIES */}
       <section className="mx-auto max-w-6xl px-4 py-8 md:py-12">
-        <h3 className="text-center text-2xl md:text-3xl font-bold tracking-tight text-gray-900 mb-6">Secciones</h3>
+        <h3 className="text-center text-2xl md:text-3xl font-bold tracking-tight text-gray-900 mb-6">
+          Secciones
+        </h3>
         <div className="grid grid-cols-2 gap-3 md:gap-6">
           {categories.map((c) => (
             <a key={c.id} href={c.href} className="group relative overflow-hidden rounded-xl shadow-sm">
               <div className="relative aspect-square">
-                <Image src={c.image} alt={c.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                <Image
+                  src={c.image}
+                  alt={c.title}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                />
               </div>
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
               <span className="absolute inset-x-0 bottom-4 text-center text-white font-bold tracking-widest text-sm md:text-base">
@@ -89,7 +101,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PROMOS VIGENTES (desde Firestore) */}
+      {/* PROMOS VIGENTES */}
       <section className="mx-auto max-w-6xl px-4 pb-10 md:pb-16">
         <h3 className="text-center text-2xl md:text-3xl font-bold tracking-tight text-gray-900 mb-6">
           💥PROMOS VIGENTES💥
