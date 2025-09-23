@@ -72,7 +72,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setSearchOpen(true)}
-                className="inline-flex items-center gap-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/10 shadow-sm px-3 py-2 text-sm"
+                className="inline-flex items-center gap-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/10 shadow-sm px-3 py-2 text-sm cursor-pointer"
                 aria-label="Buscar productos (Ctrl/Cmd + K)"
                 title="Buscar productos (Ctrl/Cmd + K)"
               >
@@ -86,7 +86,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={openCart}
-                className="flex items-center gap-2 text-sm hover:opacity-80"
+                className="flex items-center gap-2 text-sm hover:opacity-80 cursor-pointer"
               >
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="opacity-90">
                   <path d="M6 6h15l-1.5 8.5a2 2 0 0 1-2 1.6H9.4a2 2 0 0 1-2-1.6L6 6Z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>

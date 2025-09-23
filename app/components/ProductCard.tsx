@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCartStore } from "@/app/store/useCart";
 
 export type Product = {
   id: string;
@@ -13,21 +12,8 @@ export type Product = {
 };
 
 export default function ProductCard({ p }: { p: Product }) {
-  const addItem = useCartStore((s) => s.addItem);
 
   const href = p.slug ? `/producto/${p.slug}` : `/producto/${p.id}`;
-  const handleAdd = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    addItem({
-      id: p.id,
-      title: p.title,
-      price: p.price,
-      image: p.image,
-      qty: 1,
-      color: null,
-      size: null,
-    });
-  };
 
   return (
     <div className="group rounded-xl bg-white p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow">
@@ -47,15 +33,6 @@ export default function ProductCard({ p }: { p: Product }) {
           </p>
         </div>
       </Link>
-
-      {/* Botón fuera del <Link> para no navegar */}
-      <button
-        type="button"
-        onClick={handleAdd}
-        className="mt-2 w-full rounded-full border border-gray-200 py-2 text-sm hover:bg-gray-50"
-      >
-        Agregar al carrito
-      </button>
     </div>
   );
 }

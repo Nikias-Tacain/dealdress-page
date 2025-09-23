@@ -28,8 +28,8 @@ type ProductDoc = {
 const categories: Category[] = [
   { id: "deportivo", title: "DEPORTIVO", image: "/categoria-deportivo.png", href: "/tienda?categoria=deportivo" },
   { id: "calzado", title: "CALZADO", image: "/categoria-calzado.png", href: "/tienda?categoria=calzado" },
-  { id: "bolsos", title: "BOLSOS", image: "/categoria-bolsos.png", href: "/tienda?categoria=bolsos" },
-  { id: "mochilas", title: "MOCHILAS", image: "/categoria-mochilas.png", href: "/tienda?categoria=mochilas" },
+  { id: "bolsos", title: "BOLSOS", image: "/categoria-bolsos.jpeg", href: "/tienda?categoria=bolsos" },
+  { id: "mochilas", title: "MOCHILAS", image: "/categoria-mochilas.jpeg", href: "/tienda?categoria=mochilas" },
 ];
 
 export default function Home() {
@@ -65,16 +65,20 @@ export default function Home() {
   return (
     <main className="min-h-dvh bg-[#e6d8d6] text-gray-900">
       {/* HERO */}
-      <section className="relative">
-        <Image
-          src="/hero.svg"
-          alt="Banner"
-          width={1920}
-          height={640}
-          className="w-full h-auto"
-          priority
-        />
-      </section>
+<section className="w-full">
+  <div className="mx-auto max-w-[1100px]">
+    <Image
+      src="/hero.svg"
+      alt="Banner"
+      width={1800}
+      height={480}
+      className="w-full h-auto block"
+      sizes="(max-width: 1100px) 100vw, 1100px"
+      priority
+    />
+  </div>
+</section>
+
 
       {/* CATEGORIES */}
       <section className="mx-auto max-w-6xl px-4 py-8 md:py-12">

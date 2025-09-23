@@ -121,7 +121,7 @@ export default function Footer() {
               <button
                 type="submit"
                 disabled={sending}
-                className="rounded-lg bg-black px-4 py-2 text-sm text-white hover:opacity-90 disabled:opacity-60"
+                className="rounded-lg bg-black px-4 py-2 text-sm text-white hover:opacity-90 disabled:opacity-60 cursor-pointer"
               >
                 {sending ? "Enviando…" : "Suscribirme"}
               </button>

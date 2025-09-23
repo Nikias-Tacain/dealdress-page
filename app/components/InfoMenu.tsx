@@ -42,7 +42,7 @@ export default function InfoMenu({ compact = false }: { compact?: boolean }) {
         aria-haspopup="menu"
         aria-expanded={openMenu}
       >
-        <span className="tracking-wide">INFORMACIÓN</span>
+        <span className="tracking-wide cursor-pointer">INFORMACIÓN</span>
         <span className="ml-1.5 opacity-90">↓</span>
       </button>
 
@@ -111,7 +111,7 @@ function MenuItem({ label, onClick }: { label: string; onClick: () => void }) {
     <button
       role="menuitem"
       onClick={onClick}
-      className="w-full text-left px-4 py-2.5 text-sm hover:bg-white/10 focus:bg-white/10 focus:outline-none"
+      className="w-full text-left px-4 py-2.5 text-sm hover:bg-white/10 focus:bg-white/10 focus:outline-none cursor-pointer"
     >
       {label}
     </button>

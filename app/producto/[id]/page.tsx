@@ -253,13 +253,13 @@ export default function ProductDetailPage() {
             {/* Colores */}
             {p.colors && p.colors.length > 0 && (
               <div className="mt-5">
-                <div className="text-sm font-medium mb-2">Color</div>
+                <div className="text-sm font-medium mb-2 ">Color</div>
                 <div className="flex flex-wrap gap-2">
                   {p.colors.map((c) => (
                     <button
                       key={c}
                       onClick={() => setColor(c)}
-                      className={`px-3 py-1.5 rounded-full border text-sm ${
+                      className={`px-3 cursor-pointer py-1.5 rounded-full border text-sm ${
                         color === c ? "bg-black text-white" : "bg-white"
                       }`}
                       aria-pressed={color === c}
@@ -286,7 +286,7 @@ export default function ProductDetailPage() {
                         onClick={() => !disabled && setSize(s)}
                         disabled={disabled}
                         className={[
-                          "px-3 py-1.5 rounded-full border text-sm",
+                          "px-3 py-1.5 rounded-full border text-sm cursor-pointer",
                           selected ? "bg-black text-white" : "bg-white",
                           disabled ? "opacity-40 cursor-not-allowed" : "hover:bg-gray-50",
                         ].join(" ")}
@@ -309,22 +309,23 @@ export default function ProductDetailPage() {
             {/* Cantidad */}
             <div className="mt-5">
               <div className="text-sm font-medium mb-2">Cantidad</div>
-              <div className="inline-flex items-center rounded-full border overflow-hidden">
-                <button onClick={() => setQty((q) => Math.max(1, Math.min((maxQty || 1), Math.floor(q - 1))))} className="px-3 py-2">−</button>
+              <div className="inline-flex items-center rounded-full border overflow-hidden ">
+                <button onClick={() => setQty((q) => Math.max(1, Math.min((maxQty || 1), Math.floor(q - 1))))} className="px-3 py-2 cursor-pointer">−</button>
                 <input
                   type="number"
                   min={1}
                   max={maxQty || 1}
                   value={qty}
-                  onChange={(e) =>
-                    setQty((_) => {
-                      const n = Number(e.target.value || 1);
-                      return Math.max(1, Math.min((maxQty || 1), Math.floor(n)));
-                    })
-                  }
-                  className="w-14 text-center outline-none py-2"
+onChange={(e) =>
+  setQty(() => {
+    const n = Number(e.target.value || 1);
+    return Math.max(1, Math.min(maxQty || 1, Math.floor(n)));
+  })
+}
+
+                  className="w-14 text-center outline-none py-2 "
                 />
-                <button onClick={() => setQty((q) => Math.max(1, Math.min((maxQty || 1), Math.floor(q + 1))))} className="px-3 py-2">+</button>
+                <button onClick={() => setQty((q) => Math.max(1, Math.min((maxQty || 1), Math.floor(q + 1))))} className="px-3 py-2 cursor-pointer">+</button>
               </div>
               <p className="text-xs text-gray-600 mt-1">
                 Máximo {maxQty} {maxQty === 1 ? "unidad" : "unidades"}
@@ -338,21 +339,33 @@ export default function ProductDetailPage() {
                 className={btnClass}
                 disabled={sizeBlocked || addState === "adding"}
                 onClick={() => {
-                  if (sizeBlocked) {
-                    toast.error("Elegí un talle antes de agregar 🙏");
-                    return;
-                  }
-                  setAddState("adding");
-                  const img = mainSrc;
-                  addItem({ id: p.id, title: p.title, price: p.price, image: img, qty, color, size });
-                  setAddState("added");
-                  toast.success("Producto agregado al carrito", {
-                    action: { label: "Ver carrito", onClick: openCart },
-                  });
-                  setTimeout(() => setAddState("idle"), 1200);
-                }}
+  if (sizeBlocked) {
+    toast.error("Elegí un talle antes de agregar 🙏");
+    return;
+  }
+  setAddState("adding");
+  const img = mainSrc;
+
+  addItem({
+    id: p.id,
+    title: p.title,
+    price: p.price,
+    image: img,
+    qty,
+    color,
+    size,
+    maxStock: stockForSelected,   // ⬅️ tope real del talle
+  });
+
+  setAddState("added");
+  toast.success("Producto agregado al carrito", {
+    action: { label: "Ver carrito", onClick: openCart },
+  });
+  setTimeout(() => setAddState("idle"), 1200);
+}}
+
               >
-                <span className="flex items-center justify-center gap-2">
+                <span className="flex items-center justify-center gap-2 cursor-pointer">
                   {addState === "adding" && (
                     <span className="inline-block h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
                   )}

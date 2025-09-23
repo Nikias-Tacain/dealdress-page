@@ -45,7 +45,7 @@ export default function CartModal() {
           <h3 className="text-lg font-semibold">Tu carrito ({count})</h3>
           <button
             onClick={closeCart}
-            className="rounded-full border px-3 py-1 text-sm hover:bg-gray-50"
+            className="rounded-full border px-3 py-1 text-sm hover:bg-gray-50 cursor-pointer"
             aria-label="Cerrar carrito"
           >
             Cerrar
@@ -58,7 +58,18 @@ export default function CartModal() {
             <p className="text-sm text-gray-600">No hay productos en el carrito.</p>
           ) : (
             items.map((it, i) => {
-              const max = Math.min(10, it.maxStock ?? 10); // ⬅️ tope por variante
+              // ⬇️ tope real para esta variante (talle/color), acotado a 10
+              const max = Math.min(10, it.maxStock ?? 10);
+              const dec = () => setQty(i, (items[i].qty || 1) - 1);
+              const inc = () => setQty(i, (items[i].qty || 1) + 1);
+              const onInput = (v: number) => {
+                if (Number.isNaN(v)) v = 1;
+                v = Math.floor(v);
+                if (v < 1) v = 1;
+                if (v > max) v = max;
+                setQty(i, v);
+              };
+
               return (
                 <div key={`${it.id}-${i}`} className="flex gap-3">
                   <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
@@ -66,18 +77,30 @@ export default function CartModal() {
                       <Image src={it.image} alt={it.title} fill className="object-cover" />
                     ) : null}
                   </div>
+
                   <div className="flex-1">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <div className="font-medium leading-tight line-clamp-2">{it.title}</div>
+                        <div className="font-medium leading-tight line-clamp-2">
+                          {it.title}
+                        </div>
                         <div className="text-xs text-gray-600 mt-0.5">
-                          {it.color ? <>Color: <b>{it.color}</b> · </> : null}
-                          {it.size ? <>Talle: <b>{it.size}</b></> : null}
+                          {it.color ? (
+                            <>
+                              Color: <b>{it.color}</b> ·{" "}
+                            </>
+                          ) : null}
+                          {it.size ? (
+                            <>
+                              Talle: <b>{it.size}</b>
+                            </>
+                          ) : null}
                         </div>
                       </div>
+
                       <button
                         onClick={() => removeItem(i)}
-                        className="text-xs text-gray-500 hover:text-red-600"
+                        className="text-xs text-gray-500 hover:text-red-600 cursor-pointer"
                       >
                         Quitar
                       </button>
@@ -86,34 +109,41 @@ export default function CartModal() {
                     <div className="mt-2 flex items-center justify-between">
                       <div className="inline-flex items-center rounded-full border overflow-hidden">
                         <button
-                          onClick={() => setQty(i, (items[i].qty || 1) - 1)}
-                          className="px-3 py-1.5"
+                          onClick={dec}
+                          className="px-3 py-1.5 cursor-pointer disabled:opacity-40"
                           aria-label="Disminuir"
                           disabled={it.qty <= 1}
                         >
                           −
                         </button>
+
                         <input
                           type="number"
                           min={1}
                           max={max}
                           value={items[i].qty}
-                          onChange={(e) => setQty(i, Number(e.target.value || 1))}
+                          onChange={(e) => onInput(Number(e.target.value))}
                           className="w-14 text-center outline-none py-1.5"
+                          aria-label="Cantidad"
+                          inputMode="numeric"
                         />
+
                         <button
-                          onClick={() => setQty(i, (items[i].qty || 1) + 1)}
-                          className="px-3 py-1.5"
+                          onClick={inc}
+                          className="px-3 py-1.5 cursor-pointer disabled:opacity-40"
                           aria-label="Aumentar"
-                          disabled={it.qty >= max}
-                          title={it.qty >= max ? "Alcanzaste el stock disponible" : ""}
+                          disabled={items[i].qty >= max}
+                          title={items[i].qty >= max ? "Alcanzaste el stock disponible" : ""}
                         >
                           +
                         </button>
                       </div>
 
                       <div className="font-medium">
-                        ${new Intl.NumberFormat("es-AR").format(it.price * it.qty)}
+                        $
+                        {new Intl.NumberFormat("es-AR").format(
+                          it.price * it.qty
+                        )}
                       </div>
                     </div>
 
@@ -139,14 +169,15 @@ export default function CartModal() {
           <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={clear}
-              className="flex-1 rounded-full border border-gray-300 bg-white py-3 hover:bg-gray-50 disabled:opacity-60"
+              className="flex-1 rounded-full border border-gray-300 bg-white py-3 hover:bg-gray-50 disabled:opacity-60 cursor-pointer"
               disabled={items.length === 0}
             >
               Vaciar carrito
             </button>
+
             <Link
-              href=""
-              className={`flex-1 rounded-full text-center py-3 ${
+              href="/checkout"
+              className={`flex-1 cursor-pointer rounded-full text-center py-3 ${
                 items.length === 0
                   ? "bg-gray-300 cursor-not-allowed text-white"
                   : "bg-black text-white hover:opacity-90"

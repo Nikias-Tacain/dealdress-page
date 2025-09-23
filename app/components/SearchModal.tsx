@@ -1,18 +1,11 @@
+// app/components/SearchModal.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "../lib/firebase";
-import {
-  collection,
-  endAt,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  startAt,
-} from "firebase/firestore";
+import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 
 type Result = {
   id: string;
@@ -24,7 +17,6 @@ type Result = {
 
 type ProductDoc = {
   title?: string;
-  titleLower?: string;
   price?: number;
   image?: string;
   slug?: string;
@@ -50,9 +42,10 @@ export default function SearchModal({
   const debounced = useDebounced(qtext, 300);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Result[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // cierra con ESC
+  // Cerrar con ESC
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -60,48 +53,72 @@ export default function SearchModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // foco al abrir
+  // Foco al abrir + limpiar al cerrar
   useEffect(() => {
     if (open) setTimeout(() => inputRef.current?.focus(), 50);
     else {
       setQtext("");
       setResults([]);
+      setError(null);
     }
   }, [open]);
 
-  // consulta Firestore (case-insensitive usando titleLower)
+  // Búsqueda "contains" case-insensitive en cliente (sin titleLower)
   useEffect(() => {
     const run = async () => {
-      const term = debounced.trim().toLowerCase();
       if (!open) return;
+
+      const term = debounced.trim().toLowerCase();
+
+      // si no escribieron nada, limpio y salgo
       if (!term) {
         setResults([]);
+        setError(null);
         return;
       }
+
+      // para evitar consultas muy frecuentes con 1 letra
+      if (term.length < 2) {
+        setResults([]);
+        setError(null);
+        return;
+      }
+
       setLoading(true);
-      const col = collection(db, "products");
-      const snap = await getDocs(
-        query(
-          col,
-          orderBy("titleLower"),
-          startAt(term),
-          endAt(term + "\uf8ff"),
-          limit(20)
-        )
-      );
-      const list: Result[] = snap.docs.map((d) => {
-        const data = d.data() as ProductDoc;
-        return {
-          id: d.id,
-          title: data.title ?? "Producto",
-          price: Number(data.price ?? 0),
-          image: data.image ?? "/img/placeholder.png",
-          slug: data.slug,
-        };
-      });
-      setResults(list);
-      setLoading(false);
+      setError(null);
+
+      try {
+        const col = collection(db, "products");
+
+        // Traemos un “lote razonable” y filtramos en cliente por substring.
+        // Subí el limit si tenés mucho catálogo.
+        const snap = await getDocs(query(col, orderBy("title"), limit(200)));
+
+        const all: Result[] = snap.docs.map((d) => {
+          const data = d.data() as ProductDoc;
+          return {
+            id: d.id,
+            title: data.title ?? "Producto",
+            price: Number(data.price ?? 0),
+            image: data.image ?? "/img/placeholder.png",
+            slug: data.slug,
+          };
+        });
+
+        const filtered = all
+          .filter((p) => (p.title || "").toLowerCase().includes(term))
+          .slice(0, 20);
+
+        setResults(filtered);
+      } catch (e) {
+        console.error("Search error:", e);
+        setError("No pudimos buscar ahora. Intentá de nuevo en un momento.");
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
     };
+
     run();
   }, [debounced, open]);
 
@@ -109,13 +126,18 @@ export default function SearchModal({
 
   return (
     <div className="fixed inset-0 z-[70]">
+      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden />
+
+      {/* Panel */}
       <div className="absolute left-1/2 top-10 w-[92vw] max-w-2xl -translate-x-1/2 rounded-2xl bg-white shadow-xl">
         <div className="flex items-center gap-2 border-b px-4 py-3">
+          {/* Icono lupa */}
           <svg width="18" height="18" viewBox="0 0 24 24" className="opacity-70">
             <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" fill="none" />
             <path d="M20 20l-3.5-3.5" stroke="currentColor" strokeWidth="1.5" />
           </svg>
+
           <input
             ref={inputRef}
             value={qtext}
@@ -123,6 +145,7 @@ export default function SearchModal({
             placeholder="Buscar productos…"
             className="flex-1 outline-none py-1.5"
           />
+
           <button
             onClick={onClose}
             className="rounded-md px-2 py-1 text-sm hover:bg-gray-100"
@@ -132,12 +155,19 @@ export default function SearchModal({
           </button>
         </div>
 
+        {/* Resultados */}
         <div className="max-h-[60vh] overflow-auto p-2">
-          {loading ? (
+          {error ? (
+            <div className="p-4 text-sm text-rose-600">{error}</div>
+          ) : loading ? (
             <div className="p-4 text-sm text-gray-600">Buscando…</div>
           ) : results.length === 0 ? (
             <div className="p-4 text-sm text-gray-600">
-              {qtext ? "Sin resultados." : "Empezá a escribir para buscar."}
+              {qtext.length > 0 && qtext.trim().length < 2
+                ? "Escribí al menos 2 letras."
+                : qtext
+                ? "Sin resultados."
+                : "Empezá a escribir para buscar."}
             </div>
           ) : (
             <ul className="divide-y">

@@ -121,27 +121,89 @@ function TiendaInner() {
   return (
     <main className="min-h-dvh bg-[#e6d8d6] text-gray-900">
       {/* Hero simple de tienda */}
-      <section className="relative w-full">
-        <Image src="/hero-tienda.png" alt="Tienda" width={1920} height={480} className="w-full h-auto" priority />
-      </section>
+      <section className="w-full">
+  <div className="mx-auto max-w-[1100px]">
+    <Image
+      src="/hero-tienda.png"
+      alt="Tienda"
+      width={1800}
+      height={480}
+      className="w-full h-auto block"
+      sizes="(max-width: 1100px) 100vw, 1100px"
+      priority
+    />
+  </div>
+</section>
+
 
       <section className="mx-auto max-w-6xl px-4 py-8 md:py-12">
-        <header className="flex flex-wrap items-center justify-between gap-3 mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold">Tienda</h1>
+<header className="flex flex-wrap items-center justify-between gap-3 mb-6">
+  <h1 className="text-2xl md:text-3xl font-bold">Tienda</h1>
 
-          {/* Filtro por categoría */}
-          <div className="flex items-center gap-2 text-sm">
-            <span className="opacity-70">Categoría:</span>
-            <div className="flex gap-2">
-              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${!categoria ? "bg-black text-white" : "bg-white"}`} href="/tienda">Todas</Link>
-              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="deportivo"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=deportivo">Deportivo</Link>
-              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="calzado"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=calzado">Calzado</Link>
-              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="bolsos"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=bolsos">Bolsos</Link>
-              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="mochilas"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=mochilas">Mochilas</Link>
-              <Link scroll={false} className={`px-3 py-1.5 rounded-full border ${categoria==="promos"?"bg-black text-white":"bg-white"}`} href="/tienda?categoria=promos">Promos</Link>
-            </div>
-          </div>
-        </header>
+  {/* Filtro por categoría */}
+  <div className="flex items-center gap-2 text-sm min-w-0">
+    <span className="opacity-70 shrink-0">Categoría:</span>
+
+    {/* 👉 envuelve y no desborda */}
+    <div className="flex flex-wrap gap-2 max-w-full">
+      <Link
+        scroll={false}
+        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
+          !categoria ? "bg-black text-white" : "bg-white"
+        }`}
+        href="/tienda"
+      >
+        Todas
+      </Link>
+      <Link
+        scroll={false}
+        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
+          categoria === "deportivo" ? "bg-black text-white" : "bg-white"
+        }`}
+        href="/tienda?categoria=deportivo"
+      >
+        Deportivo
+      </Link>
+      <Link
+        scroll={false}
+        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
+          categoria === "calzado" ? "bg-black text-white" : "bg-white"
+        }`}
+        href="/tienda?categoria=calzado"
+      >
+        Calzado
+      </Link>
+      <Link
+        scroll={false}
+        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
+          categoria === "bolsos" ? "bg-black text-white" : "bg-white"
+        }`}
+        href="/tienda?categoria=bolsos"
+      >
+        Bolsos
+      </Link>
+      <Link
+        scroll={false}
+        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
+          categoria === "mochilas" ? "bg-black text-white" : "bg-white"
+        }`}
+        href="/tienda?categoria=mochilas"
+      >
+        Mochilas
+      </Link>
+      <Link
+        scroll={false}
+        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
+          categoria === "promos" ? "bg-black text-white" : "bg-white"
+        }`}
+        href="/tienda?categoria=promos"
+      >
+        Promos
+      </Link>
+    </div>
+  </div>
+</header>
+
 
         {/* Grid */}
         {loading ? (
