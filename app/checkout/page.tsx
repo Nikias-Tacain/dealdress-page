@@ -246,17 +246,15 @@ export default function CheckoutPage() {
               .filter(Boolean)
               .join(" | ") || undefined,
         },
-        items: items.map((it) => ({
-          id: `${it.id}${it.color ? `|${it.color}` : ""}${
-            it.size ? `|${it.size}` : ""
-          }`,
-          title: `${it.title}${it.size ? ` - Talle ${it.size}` : ""}${
-            it.color ? ` - ${it.color}` : ""
-          }`,
-          quantity: it.qty,
-          unit_price: it.price,
-          picture_url: it.image,
-        })),
+items: items.map((it) => ({
+  id: it.id,
+  title: it.title,
+  price: it.price,
+  qty: it.qty,
+  ...(it.color ? { color: it.color } : {}),   // solo si existe
+  ...(it.size  ? { size:  it.size  } : {}),   // solo si existe
+  ...(it.maxStock !== undefined ? { maxStock: it.maxStock } : {}),
+})),
         metadata: {
           orderId,
           orderNumber,
