@@ -7,7 +7,7 @@ import { FieldValue } from "firebase-admin/firestore";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** Tipos mínimos para evitar `any` y satisfacer ESLint */
+// Tipos mínimos (evitan any)
 type PaymentGetResponse = {
   status?: string;
   payment_method?: { type?: string | null } | null;
@@ -16,20 +16,16 @@ type PaymentGetResponse = {
   transaction_amount?: number | null;
 };
 
-type PreferenceGetResponse = {
-  metadata?: {
-    orderDraft?: OrderDraft | undefined;
-  };
-};
-
 type OrderDraft = {
-  // Estructura mínima necesaria; si querés podés tiparlo más estricto
   items?: unknown;
   buyer?: unknown;
   shipping?: unknown;
   totals?: unknown;
   coupon?: unknown;
-  // Podés agregar más campos si los usás
+};
+
+type PreferenceGetResponse = {
+  metadata?: { orderDraft?: OrderDraft };
 };
 
 export async function GET(req: NextRequest) {
@@ -39,7 +35,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Falta MP_ACCESS_TOKEN" }, { status: 500 });
     }
 
-    // Parámetros de retorno de MP
     const paymentId = req.nextUrl.searchParams.get("payment_id");
     const status = req.nextUrl.searchParams.get("status");
     const prefId = req.nextUrl.searchParams.get("preference_id");
@@ -48,41 +43,34 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Faltan parámetros" }, { status: 400 });
     }
 
-    // SDK MP
-    const client = new MercadoPagoConfig({ accessToken });
+    const mp = new MercadoPagoConfig({ accessToken });
 
     // 1) Verificar pago
-    const payment = new Payment(client);
-    const p = (await payment.get({ id: paymentId })) as PaymentGetResponse;
-
+    const p = (await new Payment(mp).get({ id: paymentId })) as PaymentGetResponse;
     if (p.status !== "approved" && status !== "approved") {
-      // No aprobada: no creamos orden
       return NextResponse.json({ ok: true, skipped: true, reason: "Pago no aprobado" });
     }
 
-    // 2) Idempotencia: si ya creamos la orden para este paymentId, devolvemos ok
-    const existSnap = await adminDb
+    // 2) Idempotencia
+    const already = await adminDb
       .collection("orders")
       .where("mp.paymentId", "==", paymentId)
       .limit(1)
       .get();
-
-    if (!existSnap.empty) {
+    if (!already.empty) {
       return NextResponse.json({ ok: true, already: true });
     }
 
-    // 3) Recuperar la metadata de la preferencia para obtener el orderDraft
-    const pref = new Preference(client);
-    const prefRes = (await pref.get({ preferenceId: prefId })) as PreferenceGetResponse;
+    // 3) Leer metadata.orderDraft desde la preferencia
+    const prefRes = (await new Preference(mp).get({ preferenceId: prefId })) as PreferenceGetResponse;
     const orderDraft = prefRes?.metadata?.orderDraft;
-
     if (!orderDraft) {
-      return NextResponse.json({ error: "No se encontró metadata.orderDraft" }, { status: 400 });
+      return NextResponse.json({ error: "No se encontró metadata.orderDraft en la preferencia" }, { status: 400 });
     }
 
-    // 4) Crear orden definitiva en Firestore (con Admin SDK)
+    // 4) Crear orden
     const doc = {
-      ...orderDraft, // items / buyer / shipping / totals / coupon
+      ...orderDraft,
       status: "approved",
       createdAt: FieldValue.serverTimestamp(),
       mp: {
@@ -97,10 +85,14 @@ export async function GET(req: NextRequest) {
     };
 
     const ref = await adminDb.collection("orders").add(doc);
-
     return NextResponse.json({ ok: true, orderId: ref.id });
-  } catch (e) {
+  } catch (e: unknown) {
+    // Log al server y feedback útil al cliente en dev
     console.error("Finalize error:", e);
-    return NextResponse.json({ error: "Error finalizando orden" }, { status: 500 });
+    const msg =
+      process.env.NODE_ENV !== "production" && e instanceof Error
+        ? `Finalize error: ${e.message}`
+        : "Error finalizando orden";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

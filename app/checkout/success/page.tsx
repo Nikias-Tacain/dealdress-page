@@ -11,40 +11,65 @@ export const dynamic = "force-dynamic";
 function SuccessInner() {
   const params = useSearchParams();
   const clear = useCartStore((s) => s.clear);
-  const [done, setDone] = useState<"ok" | "err" | "skip" | null>(null);
+  const [state, setState] = useState<{
+    status: "idle" | "ok" | "skip" | "err";
+    message?: string;
+  }>({ status: "idle" });
 
-  useEffect(() => {
+  async function callFinalize() {
     const payment_id = params.get("payment_id");
     const status = params.get("status");
     const preference_id = params.get("preference_id");
-    if (!payment_id || !preference_id) return;
+    if (!payment_id || !preference_id) {
+      setState({ status: "err", message: "Parámetros incompletos" });
+      return;
+    }
 
-    (async () => {
-      try {
-        const url = `/api/mp/finalize?payment_id=${payment_id}&status=${status}&preference_id=${preference_id}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (res.ok) {
-          // si realmente se creó (o ya existía) limpiamos carrito
-          clear();
-          setDone(data.skipped ? "skip" : "ok");
-        } else {
-          setDone("err");
-        }
-      } catch {
-        setDone("err");
+    try {
+      setState({ status: "idle" });
+      const url = `/api/mp/finalize?payment_id=${payment_id}&status=${status}&preference_id=${preference_id}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (res.ok) {
+        clear();
+        setState({ status: data.skipped ? "skip" : "ok" });
+      } else {
+        setState({ status: "err", message: data?.error || "Fallo al registrar la orden" });
       }
-    })();
-  }, [params, clear]);
+    } catch (e) {
+      setState({ status: "err", message: (e as Error).message });
+    }
+  }
+
+  useEffect(() => {
+    void callFinalize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <main className="mx-auto max-w-xl p-6">
       <h1 className="text-2xl font-bold mb-2">¡Pago aprobado!</h1>
-      <p className="mb-6">Estamos registrando tu orden…</p>
-      {done === "ok" && <p className="mb-6">Tu compra fue registrada correctamente.</p>}
-      {done === "skip" && <p className="mb-6">Pago aprobado. (La orden ya estaba registrada)</p>}
-      {done === "err"  && <p className="mb-6 text-rose-600">No pudimos registrar la orden. Guardá el comprobante y escribinos.</p>}
-      <Link href="/tienda" className="underline">Volver a la tienda</Link>
+      <p className="mb-6">
+        {state.status === "idle" && "Estamos registrando tu orden…"}
+        {state.status === "ok" && "Tu compra fue registrada correctamente."}
+        {state.status === "skip" && "Pago aprobado (la orden ya estaba registrada)."}
+        {state.status === "err" && (
+          <span className="text-rose-600">
+            No pudimos registrar la orden. {state.message ? `(${state.message}) ` : ""}
+            Guardá el comprobante y escribinos.
+          </span>
+        )}
+      </p>
+
+      {state.status === "err" && (
+        <button onClick={callFinalize} className="rounded-full border px-4 py-2 mr-4 hover:bg-gray-50">
+          Reintentar
+        </button>
+      )}
+
+      <Link href="/tienda" className="underline">
+        Volver a la tienda
+      </Link>
     </main>
   );
 }
