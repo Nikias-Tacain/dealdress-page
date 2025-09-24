@@ -58,7 +58,6 @@ export default function CartModal() {
             <p className="text-sm text-gray-600">No hay productos en el carrito.</p>
           ) : (
             items.map((it, i) => {
-              // ⬇️ tope real para esta variante (talle/color), acotado a 10
               const max = Math.min(10, it.maxStock ?? 10);
               const dec = () => setQty(i, (items[i].qty || 1) - 1);
               const inc = () => setQty(i, (items[i].qty || 1) + 1);
@@ -140,10 +139,7 @@ export default function CartModal() {
                       </div>
 
                       <div className="font-medium">
-                        $
-                        {new Intl.NumberFormat("es-AR").format(
-                          it.price * it.qty
-                        )}
+                        ${new Intl.NumberFormat("es-AR").format(it.price * it.qty)}
                       </div>
                     </div>
 
@@ -183,7 +179,13 @@ export default function CartModal() {
                   : "bg-black text-white hover:opacity-90"
               }`}
               aria-disabled={items.length === 0}
-              onClick={(e) => items.length === 0 && e.preventDefault()}
+              onClick={(e) => {
+                if (items.length === 0) {
+                  e.preventDefault();
+                } else {
+                  closeCart(); // ⬅️ cerrar modal al ir a pagar
+                }
+              }}
             >
               Ir a pagar
             </Link>

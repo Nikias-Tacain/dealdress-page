@@ -15,6 +15,30 @@ type OrderDraft = {
   coupon: { code: string; amount: number } | null;
 };
 
+// Tipo mínimo para leer una orden existente desde Firestore
+type FirestoreOrder = {
+  number?: number | null;
+  items?: OrderDraft["items"];
+  buyer?: OrderDraft["buyer"] | null;
+  shipping?: OrderDraft["shipping"] | null;
+  totals?: OrderDraft["totals"] | null;
+  coupon?: OrderDraft["coupon"] | null;
+  mp?: {
+    paymentId?: string;
+    preferenceId?: string;
+    paymentMethod?: string | null;
+    paymentType?: string | null;
+    status?: string;
+    statusDetail?: string;
+    amount?: number;
+  } | null;
+  status?: string;
+};
+
+function genOrderNumber() {
+  return Math.floor(100000 + Math.random() * 900000);
+}
+
 export async function GET(req: NextRequest) {
   const accessToken = process.env.MP_ACCESS_TOKEN;
   if (!accessToken) {
@@ -36,11 +60,10 @@ export async function GET(req: NextRequest) {
     const p = await payment.get({ id: paymentId });
 
     if (p.status !== "approved" && status !== "approved") {
-      // no registramos orden si MP no está approved
       return NextResponse.json({ ok: true, skipped: true, reason: "Pago no aprobado" });
     }
 
-    // 2) Idempotencia: ya creamos esta orden antes?
+    // 2) Idempotencia: ¿ya está en Firestore?
     const existSnap = await adminDb
       .collection("orders")
       .where("mp.paymentId", "==", paymentId)
@@ -48,24 +71,40 @@ export async function GET(req: NextRequest) {
       .get();
 
     if (!existSnap.empty) {
-      return NextResponse.json({ ok: true, already: true });
+      const docSnap = existSnap.docs[0];
+      const existing = docSnap.data() as FirestoreOrder; // ✅ sin `any`
+
+      return NextResponse.json({
+        ok: true,
+        already: true,
+        orderId: docSnap.id,
+        orderNumber: existing?.number ?? null,
+        order: {
+          number: existing?.number ?? null,
+          items: existing?.items ?? [],
+          buyer: existing?.buyer ?? null,
+          shipping: existing?.shipping ?? null,
+          totals: existing?.totals ?? null,
+          coupon: existing?.coupon ?? null,
+          mp: existing?.mp ?? null,
+        },
+      });
     }
 
     // 3) Leer metadata.orderDraft desde la preferencia
     const pref = new Preference(client);
     const prefRes = await pref.get({ preferenceId });
-
     const orderDraft = (prefRes as unknown as { metadata?: { orderDraft?: OrderDraft } }).metadata?.orderDraft;
+
     if (!orderDraft) {
       console.error("Finalize: metadata.orderDraft faltante", { preferenceId, prefRes });
-      return NextResponse.json(
-        { error: "No se encontró metadata.orderDraft en la preferencia" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No se encontró metadata.orderDraft en la preferencia" }, { status: 400 });
     }
 
-    // 4) Crear orden definitiva en Firestore (Admin SDK ignora reglas)
+    // 4) Crear orden definitiva en Firestore
+    const orderNumber = genOrderNumber();
     const doc = {
+      number: orderNumber,
       ...orderDraft,
       status: "approved",
       createdAt: FieldValue.serverTimestamp(),
@@ -81,9 +120,28 @@ export async function GET(req: NextRequest) {
     };
 
     const ref = await adminDb.collection("orders").add(doc);
-    return NextResponse.json({ ok: true, orderId: ref.id });
+
+    return NextResponse.json({
+      ok: true,
+      orderId: ref.id,
+      orderNumber,
+      order: {
+        number: orderNumber,
+        items: orderDraft.items,
+        buyer: orderDraft.buyer,
+        shipping: orderDraft.shipping,
+        totals: orderDraft.totals,
+        coupon: orderDraft.coupon,
+        mp: {
+          paymentId,
+          preferenceId,
+          status: p.status,
+          statusDetail: p.status_detail,
+          amount: p.transaction_amount,
+        },
+      },
+    });
   } catch (e: unknown) {
-    // Logs útiles para depurar en consola del servidor
     console.error("Finalize error:", {
       message: e instanceof Error ? e.message : String(e),
       stack: e instanceof Error ? e.stack : undefined,

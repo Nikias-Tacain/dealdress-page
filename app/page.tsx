@@ -27,7 +27,7 @@ type ProductDoc = {
 
 const categories: Category[] = [
   { id: "deportivo", title: "DEPORTIVO", image: "/categoria-deportivo.png", href: "/tienda?categoria=deportivo" },
-  { id: "calzado", title: "CALZADO", image: "/categoria-calzado.png", href: "/tienda?categoria=calzado" },
+  { id: "calzado", title: "CALZADO", image: "/categoria-calzado.jpeg", href: "/tienda?categoria=calzado" },
   { id: "bolsos", title: "BOLSOS", image: "/categoria-bolsos.jpeg", href: "/tienda?categoria=bolsos" },
   { id: "mochilas", title: "MOCHILAS", image: "/categoria-mochilas.jpeg", href: "/tienda?categoria=mochilas" },
 ];
