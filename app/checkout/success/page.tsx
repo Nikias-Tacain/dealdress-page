@@ -158,7 +158,7 @@ function SuccessInner() {
         <div className="mb-6 flex gap-3">
           <button
             onClick={handleDownloadPDF}
-            className="rounded-full border px-4 py-2 hover:bg-gray-50"
+            className="rounded-full border px-4 py-2 hover:bg-gray-50 cursor-pointer"
           >
             Descargar comprobante (PDF)
           </button>
@@ -166,7 +166,7 @@ function SuccessInner() {
       )}
 
       {state.status === "err" && (
-        <button onClick={callFinalize} className="rounded-full border px-4 py-2 mr-4 hover:bg-gray-50">
+        <button onClick={callFinalize} className="rounded-full border px-4 py-2 mr-4 hover:bg-gray-50 cursor-pointer">
           Reintentar
         </button>
       )}

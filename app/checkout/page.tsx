@@ -178,7 +178,7 @@ export default function CheckoutPage() {
               title={`Tu carrito (${items.length})`}
               right={
                 items.length > 0 ? (
-                  <button onClick={clear} className="text-sm rounded-full border px-3 py-1 hover:bg-gray-50">
+                  <button onClick={clear} className="text-sm rounded-full border px-3 py-1 hover:bg-gray-50 cursor-pointer">
                     Vaciar carrito
                   </button>
                 ) : null
@@ -204,7 +204,7 @@ export default function CheckoutPage() {
                                 {it.size ? <>Talle: <b>{it.size}</b></> : null}
                               </div>
                             </div>
-                            <button onClick={() => removeItem(i)} className="text-xs text-gray-500 hover:text-red-600">
+                            <button onClick={() => removeItem(i)} className="text-xs text-gray-500 hover:text-red-600 cursor-pointer">
                               Quitar
                             </button>
                           </div>
@@ -213,7 +213,7 @@ export default function CheckoutPage() {
                             <div className="inline-flex items-center rounded-full border overflow-hidden">
                               <button
                                 onClick={() => setQty(i, (it.qty || 1) - 1)}
-                                className="px-3 py-1.5"
+                                className="px-3 py-1.5 cursor-pointer"
                                 disabled={it.qty <= 1}
                                 aria-label="Disminuir"
                               >
@@ -229,7 +229,7 @@ export default function CheckoutPage() {
                               />
                               <button
                                 onClick={() => setQty(i, (it.qty || 1) + 1)}
-                                className="px-3 py-1.5"
+                                className="px-3 py-1.5 cursor-pointer"
                                 disabled={it.qty >= max}
                                 title={it.qty >= max ? "Alcanzaste el stock disponible" : ""}
                                 aria-label="Aumentar"
@@ -329,7 +329,7 @@ export default function CheckoutPage() {
             {/* Envío */}
             <Card title="Envío">
               <div className="p-4 space-y-3 text-sm">
-                <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
                     name="shipping"
@@ -340,7 +340,7 @@ export default function CheckoutPage() {
                   <span>Retiro en local (sin costo)</span>
                 </label>
 
-                <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
                     name="shipping"
@@ -386,7 +386,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="grid grid-cols-[1fr_auto] gap-2">
                   <Input placeholder="Ingresá tu cupón" value={coupon} onChange={(e) => setCoupon(e.target.value)} />
-                  <button className="rounded-lg border px-3 py-2 hover:bg-gray-50" onClick={applyCoupon}>
+                  <button className="rounded-lg border px-3 py-2 hover:bg-gray-50 cursor-pointer" onClick={applyCoupon}>
                     Aplicar
                   </button>
                 </div>
@@ -399,7 +399,7 @@ export default function CheckoutPage() {
                 <button
                   onClick={goWhatsApp}
                   disabled={saving || !items.length}
-                  className={`rounded-full border px-4 py-3 text-center ${
+                  className={`rounded-full cursor-pointer border px-4 py-3 text-center ${
                     saving || !items.length ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "hover:bg-gray-50"
                   }`}
                 >
@@ -409,7 +409,7 @@ export default function CheckoutPage() {
                 <button
                   onClick={goMercadoPago}
                   disabled={mpLoading || !items.length}
-                  className={`rounded-full px-4 py-3 text-white text-center ${
+                  className={`rounded-full cursor-pointer px-4 py-3 text-white text-center ${
                     mpLoading || !items.length ? "bg-gray-400 cursor-not-allowed" : "bg-[#009EE3] hover:opacity-90"
                   }`}
                 >

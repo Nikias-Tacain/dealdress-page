@@ -1,4 +1,3 @@
-// app/tienda/page.tsx
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
@@ -27,6 +26,7 @@ type ProductDoc = {
   slug?: string;
   createdAt?: unknown;
   category?: string;
+  gender?: "hombre" | "mujer" | "unisex"; // 👈 agregado
 };
 
 const PAGE_SIZE = 12;
@@ -43,7 +43,8 @@ export default function TiendaPage() {
 /** -------- Componente que SÍ usa useSearchParams -------- */
 function TiendaInner() {
   const sp = useSearchParams();
-  const categoria = sp.get("categoria");
+  const categoria = sp.get("categoria") || undefined;
+  const genero = sp.get("genero") || undefined; // "hombre" | "mujer"
 
   const [items, setItems] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,12 +52,25 @@ function TiendaInner() {
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [noMore, setNoMore] = useState(false);
 
+  // ---------- Query base (primera página) ----------
   const baseQuery: Query<DocumentData> = useMemo(() => {
     const col = collection(db, "products");
-    return categoria
-      ? query(col, where("category", "==", categoria), orderBy("createdAt", "desc"), limit(PAGE_SIZE))
-      : query(col, orderBy("createdAt", "desc"), limit(PAGE_SIZE));
-  }, [categoria]);
+
+    // sin categoría => sólo orden + limit
+    if (!categoria) {
+      return query(col, orderBy("createdAt", "desc"), limit(PAGE_SIZE));
+    }
+
+    // con categoría
+    const parts = [where("category", "==", categoria as string), orderBy("createdAt", "desc")] as const;
+
+    // si además es "deportivo" y vino genero => filtramos por gender
+    if (categoria === "deportivo" && genero) {
+      return query(col, parts[0], where("gender", "==", genero as string), parts[1], limit(PAGE_SIZE));
+    }
+
+    return query(col, parts[0], parts[1], limit(PAGE_SIZE));
+  }, [categoria, genero]);
 
   useEffect(() => {
     let mounted = true;
@@ -85,19 +99,37 @@ function TiendaInner() {
       setNoMore(snap.docs.length < PAGE_SIZE);
       setLoading(false);
     })();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [baseQuery]);
 
+  // ---------- Paginado (Ver más) ----------
   const loadMore = async () => {
     if (!lastDoc || loadingMore) return;
     setLoadingMore(true);
 
     const col = collection(db, "products");
-    const q2: Query<DocumentData> = categoria
-      ? query(col, where("category", "==", categoria), orderBy("createdAt", "desc"), startAfter(lastDoc), limit(PAGE_SIZE))
-      : query(col, orderBy("createdAt", "desc"), startAfter(lastDoc), limit(PAGE_SIZE));
+    let q2: Query<DocumentData>;
+
+    if (!categoria) {
+      q2 = query(col, orderBy("createdAt", "desc"), startAfter(lastDoc), limit(PAGE_SIZE));
+    } else if (categoria === "deportivo" && genero) {
+      q2 = query(
+        col,
+        where("category", "==", categoria),
+        where("gender", "==", genero),
+        orderBy("createdAt", "desc"),
+        startAfter(lastDoc),
+        limit(PAGE_SIZE)
+      );
+    } else {
+      q2 = query(
+        col,
+        where("category", "==", categoria),
+        orderBy("createdAt", "desc"),
+        startAfter(lastDoc),
+        limit(PAGE_SIZE)
+      );
+    }
 
     const snap = await getDocs(q2);
 
@@ -122,88 +154,62 @@ function TiendaInner() {
     <main className="min-h-dvh bg-[#e6d8d6] text-gray-900">
       {/* Hero simple de tienda */}
       <section className="w-full">
-  <div className="mx-auto max-w-[1100px]">
-    <Image
-      src="/hero-tienda.png"
-      alt="Tienda"
-      width={1800}
-      height={480}
-      className="w-full h-auto block"
-      sizes="(max-width: 1100px) 100vw, 1100px"
-      priority
-    />
-  </div>
-</section>
-
+        <div className="mx-auto max-w-[1100px]">
+          <Image
+            src="/hero-tienda.png"
+            alt="Tienda"
+            width={1800}
+            height={480}
+            className="w-full h-auto block"
+            sizes="(max-width: 1100px) 100vw, 1100px"
+            priority
+          />
+        </div>
+      </section>
 
       <section className="mx-auto max-w-6xl px-4 py-8 md:py-12">
-<header className="flex flex-wrap items-center justify-between gap-3 mb-6">
-  <h1 className="text-2xl md:text-3xl font-bold">Tienda</h1>
+        <header className="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold">Tienda</h1>
 
-  {/* Filtro por categoría */}
-  <div className="flex items-center gap-2 text-sm min-w-0">
-    <span className="opacity-70 shrink-0">Categoría:</span>
+          {/* Filtro por categoría */}
+          <div className="flex flex-col gap-2 w-full sm:w-auto">
+            <div className="flex items-center gap-2 text-sm min-w-0">
+              <span className="opacity-70 shrink-0">Categoría:</span>
+              <div className="flex flex-wrap gap-2 max-w-full">
+                <Chip href="/tienda" active={!categoria} label="Todas" />
+                <Chip href="/tienda?categoria=deportivo" active={categoria === "deportivo"} label="Deportivo" />
+                <Chip href="/tienda?categoria=calzado" active={categoria === "calzado"} label="Calzado" />
+                <Chip href="/tienda?categoria=bolsos" active={categoria === "bolsos"} label="Bolsos" />
+                <Chip href="/tienda?categoria=mochilas" active={categoria === "mochilas"} label="Mochilas" />
+                <Chip href="/tienda?categoria=promos" active={categoria === "promos"} label="Promos" />
+              </div>
+            </div>
 
-    {/* 👉 envuelve y no desborda */}
-    <div className="flex flex-wrap gap-2 max-w-full">
-      <Link
-        scroll={false}
-        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
-          !categoria ? "bg-black text-white" : "bg-white"
-        }`}
-        href="/tienda"
-      >
-        Todas
-      </Link>
-      <Link
-        scroll={false}
-        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
-          categoria === "deportivo" ? "bg-black text-white" : "bg-white"
-        }`}
-        href="/tienda?categoria=deportivo"
-      >
-        Deportivo
-      </Link>
-      <Link
-        scroll={false}
-        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
-          categoria === "calzado" ? "bg-black text-white" : "bg-white"
-        }`}
-        href="/tienda?categoria=calzado"
-      >
-        Calzado
-      </Link>
-      <Link
-        scroll={false}
-        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
-          categoria === "bolsos" ? "bg-black text-white" : "bg-white"
-        }`}
-        href="/tienda?categoria=bolsos"
-      >
-        Bolsos
-      </Link>
-      <Link
-        scroll={false}
-        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
-          categoria === "mochilas" ? "bg-black text-white" : "bg-white"
-        }`}
-        href="/tienda?categoria=mochilas"
-      >
-        Mochilas
-      </Link>
-      <Link
-        scroll={false}
-        className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
-          categoria === "promos" ? "bg-black text-white" : "bg-white"
-        }`}
-        href="/tienda?categoria=promos"
-      >
-        Promos
-      </Link>
-    </div>
-  </div>
-</header>
-
+            {/* Filtro por género: solo cuando categoria=deportivo */}
+            {categoria === "deportivo" && (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="opacity-70 shrink-0">Género:</span>
+                <div className="flex flex-wrap gap-2">
+                  <Chip
+                    href="/tienda?categoria=deportivo"
+                    active={!genero}
+                    label="Todos"
+                  />
+                  <Chip
+                    href="/tienda?categoria=deportivo&genero=hombre"
+                    active={genero === "hombre"}
+                    label="Hombre"
+                  />
+                  <Chip
+                    href="/tienda?categoria=deportivo&genero=mujer"
+                    active={genero === "mujer"}
+                    label="Mujer"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </header>
 
         {/* Grid */}
         {loading ? (
@@ -211,10 +217,12 @@ function TiendaInner() {
         ) : (
           <>
             {items.length === 0 ? (
-              <p className="text-center text-gray-600">No hay productos en esta categoría.</p>
+              <p className="text-center text-gray-600">No hay productos en esta selección.</p>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                {items.map((p) => <ProductCard key={p.id} p={p} />)}
+                {items.map((p) => (
+                  <ProductCard key={p.id} p={p} />
+                ))}
               </div>
             )}
 
@@ -227,8 +235,18 @@ function TiendaInner() {
                 >
                   {loadingMore ? "Cargando..." : "Ver más"}
                   {!loadingMore && (
-                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M5 12h14" /><path d="M13 6l6 6-6 6" />
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="M13 6l6 6-6 6" />
                     </svg>
                   )}
                 </button>
@@ -269,5 +287,20 @@ function TiendaGridSkeleton() {
         </div>
       ))}
     </div>
+  );
+}
+
+/** -------- UI pequeño -------- */
+function Chip({ href, active, label }: { href: string; active: boolean; label: string }) {
+  return (
+    <Link
+      scroll={false}
+      href={href}
+      className={`px-3 py-1.5 rounded-full border whitespace-nowrap cursor-pointer ${
+        active ? "bg-black text-white" : "bg-white"
+      }`}
+    >
+      {label}
+    </Link>
   );
 }
