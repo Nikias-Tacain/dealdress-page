@@ -26,12 +26,13 @@ type ProductDoc = {
   slug?: string;
   createdAt?: unknown;
   category?: string;
-  gender?: "hombre" | "mujer" | "unisex"; // 👈 agregado
+  gender?: "hombre" | "mujer" | "unisex";
+  shoeType?: "deportivo" | "botitas_everlast";
 };
 
 const PAGE_SIZE = 12;
 
-/** -------- PÁGINA (envuelve al componente que usa useSearchParams) -------- */
+/** -------- PÁGINA -------- */
 export default function TiendaPage() {
   return (
     <Suspense fallback={<TiendaSkeleton />}>
@@ -40,11 +41,12 @@ export default function TiendaPage() {
   );
 }
 
-/** -------- Componente que SÍ usa useSearchParams -------- */
+/** -------- Componente con useSearchParams -------- */
 function TiendaInner() {
   const sp = useSearchParams();
   const categoria = sp.get("categoria") || undefined;
-  const genero = sp.get("genero") || undefined; // "hombre" | "mujer"
+  const genero = sp.get("genero") || undefined;       // para categoria=deportivo
+  const tipoCalzado = sp.get("tipo") || undefined;    // para categoria=calzado
 
   const [items, setItems] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,21 +58,39 @@ function TiendaInner() {
   const baseQuery: Query<DocumentData> = useMemo(() => {
     const col = collection(db, "products");
 
-    // sin categoría => sólo orden + limit
     if (!categoria) {
       return query(col, orderBy("createdAt", "desc"), limit(PAGE_SIZE));
     }
 
-    // con categoría
-    const parts = [where("category", "==", categoria as string), orderBy("createdAt", "desc")] as const;
-
-    // si además es "deportivo" y vino genero => filtramos por gender
-    if (categoria === "deportivo" && genero) {
-      return query(col, parts[0], where("gender", "==", genero as string), parts[1], limit(PAGE_SIZE));
+    if (categoria === "deportivo") {
+      if (genero) {
+        return query(
+          col,
+          where("category", "==", categoria),
+          where("gender", "==", genero),
+          orderBy("createdAt", "desc"),
+          limit(PAGE_SIZE)
+        );
+      }
+      return query(col, where("category", "==", categoria), orderBy("createdAt", "desc"), limit(PAGE_SIZE));
     }
 
-    return query(col, parts[0], parts[1], limit(PAGE_SIZE));
-  }, [categoria, genero]);
+    if (categoria === "calzado") {
+      if (tipoCalzado) {
+        return query(
+          col,
+          where("category", "==", categoria),
+          where("shoeType", "==", tipoCalzado),
+          orderBy("createdAt", "desc"),
+          limit(PAGE_SIZE)
+        );
+      }
+      return query(col, where("category", "==", categoria), orderBy("createdAt", "desc"), limit(PAGE_SIZE));
+    }
+
+    // resto de categorías (incluye accesorios)
+    return query(col, where("category", "==", categoria), orderBy("createdAt", "desc"), limit(PAGE_SIZE));
+  }, [categoria, genero, tipoCalzado]);
 
   useEffect(() => {
     let mounted = true;
@@ -99,7 +119,9 @@ function TiendaInner() {
       setNoMore(snap.docs.length < PAGE_SIZE);
       setLoading(false);
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [baseQuery]);
 
   // ---------- Paginado (Ver más) ----------
@@ -112,16 +134,46 @@ function TiendaInner() {
 
     if (!categoria) {
       q2 = query(col, orderBy("createdAt", "desc"), startAfter(lastDoc), limit(PAGE_SIZE));
-    } else if (categoria === "deportivo" && genero) {
-      q2 = query(
-        col,
-        where("category", "==", categoria),
-        where("gender", "==", genero),
-        orderBy("createdAt", "desc"),
-        startAfter(lastDoc),
-        limit(PAGE_SIZE)
-      );
+    } else if (categoria === "deportivo") {
+      if (genero) {
+        q2 = query(
+          col,
+          where("category", "==", categoria),
+          where("gender", "==", genero),
+          orderBy("createdAt", "desc"),
+          startAfter(lastDoc),
+          limit(PAGE_SIZE)
+        );
+      } else {
+        q2 = query(
+          col,
+          where("category", "==", categoria),
+          orderBy("createdAt", "desc"),
+          startAfter(lastDoc),
+          limit(PAGE_SIZE)
+        );
+      }
+    } else if (categoria === "calzado") {
+      if (tipoCalzado) {
+        q2 = query(
+          col,
+          where("category", "==", categoria),
+          where("shoeType", "==", tipoCalzado),
+          orderBy("createdAt", "desc"),
+          startAfter(lastDoc),
+          limit(PAGE_SIZE)
+        );
+      } else {
+        q2 = query(
+          col,
+          where("category", "==", categoria),
+          orderBy("createdAt", "desc"),
+          startAfter(lastDoc),
+          limit(PAGE_SIZE)
+        );
+      }
     } else {
+      // resto (incluye accesorios)
       q2 = query(
         col,
         where("category", "==", categoria),
@@ -152,11 +204,11 @@ function TiendaInner() {
 
   return (
     <main className="min-h-dvh bg-[#e6d8d6] text-gray-900">
-      {/* Hero simple de tienda */}
+      {/* Hero */}
       <section className="w-full">
         <div className="mx-auto max-w-[1100px]">
           <Image
-            src="/hero-tienda.png"
+            src="/hero-tienda.jpeg"
             alt="Tienda"
             width={1800}
             height={480}
@@ -171,8 +223,9 @@ function TiendaInner() {
         <header className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <h1 className="text-2xl md:text-3xl font-bold">Tienda</h1>
 
-          {/* Filtro por categoría */}
+          {/* Filtros */}
           <div className="flex flex-col gap-2 w-full sm:w-auto">
+            {/* Categorías */}
             <div className="flex items-center gap-2 text-sm min-w-0">
               <span className="opacity-70 shrink-0">Categoría:</span>
               <div className="flex flex-wrap gap-2 max-w-full">
@@ -181,29 +234,39 @@ function TiendaInner() {
                 <Chip href="/tienda?categoria=calzado" active={categoria === "calzado"} label="Calzado" />
                 <Chip href="/tienda?categoria=bolsos" active={categoria === "bolsos"} label="Bolsos" />
                 <Chip href="/tienda?categoria=mochilas" active={categoria === "mochilas"} label="Mochilas" />
+                {/* NUEVA categoría */}
+                <Chip href="/tienda?categoria=accesorios" active={categoria === "accesorios"} label="Guantes y Accesorios" />
                 <Chip href="/tienda?categoria=promos" active={categoria === "promos"} label="Promos" />
               </div>
             </div>
 
-            {/* Filtro por género: solo cuando categoria=deportivo */}
+            {/* Género (solo deportivo) */}
             {categoria === "deportivo" && (
               <div className="flex items-center gap-2 text-sm">
                 <span className="opacity-70 shrink-0">Género:</span>
                 <div className="flex flex-wrap gap-2">
+                  <Chip href="/tienda?categoria=deportivo" active={!genero} label="Todos" />
+                  <Chip href="/tienda?categoria=deportivo&genero=hombre" active={genero === "hombre"} label="Hombre" />
+                  <Chip href="/tienda?categoria=deportivo&genero=mujer" active={genero === "mujer"} label="Mujer" />
+                </div>
+              </div>
+            )}
+
+            {/* Tipo (solo calzado) */}
+            {categoria === "calzado" && (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="opacity-70 shrink-0">Tipo:</span>
+                <div className="flex flex-wrap gap-2">
+                  <Chip href="/tienda?categoria=calzado" active={!tipoCalzado} label="Todos" />
                   <Chip
-                    href="/tienda?categoria=deportivo"
-                    active={!genero}
-                    label="Todos"
+                    href="/tienda?categoria=calzado&tipo=deportivo"
+                    active={tipoCalzado === "deportivo"}
+                    label="Deportivo"
                   />
                   <Chip
-                    href="/tienda?categoria=deportivo&genero=hombre"
-                    active={genero === "hombre"}
-                    label="Hombre"
-                  />
-                  <Chip
-                    href="/tienda?categoria=deportivo&genero=mujer"
-                    active={genero === "mujer"}
-                    label="Mujer"
+                    href="/tienda?categoria=calzado&tipo=botitas_everlast"
+                    active={tipoCalzado === "botitas_everlast"}
+                    label="Botitas Everlast"
                   />
                 </div>
               </div>
@@ -211,7 +274,7 @@ function TiendaInner() {
           </div>
         </header>
 
-        {/* Grid */}
+        {/* Grid / Estado */}
         {loading ? (
           <TiendaGridSkeleton />
         ) : (

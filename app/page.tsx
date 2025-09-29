@@ -26,7 +26,7 @@ type ProductDoc = {
 };
 
 const categories: Category[] = [
-  { id: "deportivo", title: "DEPORTIVO", image: "/categoria-deportivo.png", href: "/tienda?categoria=deportivo" },
+  { id: "deportivo", title: "DEPORTIVO", image: "/categoria-deportivo.jpeg", href: "/tienda?categoria=deportivo" },
   { id: "calzado", title: "CALZADO", image: "/categoria-calzado.jpeg", href: "/tienda?categoria=calzado" },
   { id: "bolsos", title: "BOLSOS", image: "/categoria-bolsos.jpeg", href: "/tienda?categoria=bolsos" },
   { id: "mochilas", title: "MOCHILAS", image: "/categoria-mochilas.jpeg", href: "/tienda?categoria=mochilas" },
@@ -81,7 +81,7 @@ export default function Home() {
 
 
       {/* CATEGORIES */}
-      <section className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+      <section className="mx-auto max-w-5xl px-4 py-8 md:py-12">
         <h3 className="text-center text-2xl md:text-3xl font-bold tracking-tight text-gray-900 mb-6">
           Secciones
         </h3>

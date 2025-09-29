@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛒 DealDress — Tienda Online
 
-## Getting Started
+E-commerce moderno desarrollado con **Next.js 14**, **Firebase** y **Mercado Pago**, pensado para brindar una experiencia de compra ágil, segura y escalable.  
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=nextdotjs)
+![Firebase](https://img.shields.io/badge/Firebase-Firestore-orange?logo=firebase)
+![MercadoPago](https://img.shields.io/badge/MercadoPago-Payments-blue?logo=mercadopago)
+![TailwindCSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?logo=tailwindcss)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Características principales
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 🔥 **Next.js (App Router)** — Renderizado híbrido (SSR/ISR) con performance optimizada.  
+- 🎨 **TailwindCSS** — Diseño responsivo y moderno.  
+- 🔑 **Firebase** — Firestore para base de datos en tiempo real y Firebase Storage para imágenes.  
+- 💳 **Mercado Pago** — Integración completa de checkout con validación de pago y generación de órdenes.  
+- 🛍️ **Carrito persistente** con Zustand (manejo global de estado).  
+- 🔎 **Filtros dinámicos** por categoría, género y tipo de producto.  
+- 📄 **Comprobante PDF** descargable después de la compra.  
+- ☁️ **Deploy serverless en Vercel** (sin preocuparse por infraestructura).  
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📦 Tecnologías usadas
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js](https://nextjs.org/) (App Router, Server Actions, API Routes)  
+- [TypeScript](https://www.typescriptlang.org/)  
+- [TailwindCSS](https://tailwindcss.com/)  
+- [Firebase](https://firebase.google.com/) (Firestore + Storage + Admin SDK)  
+- [Mercado Pago SDK](https://www.npmjs.com/package/mercadopago)  
+- [Zustand](https://github.com/pmndrs/zustand) para manejar el carrito  
+- [jsPDF](https://github.com/parallax/jsPDF) para generar comprobantes en PDF  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
