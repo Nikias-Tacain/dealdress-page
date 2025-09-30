@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { db } from "../lib/firebase";
 import {
   collection,
@@ -43,7 +43,9 @@ export default function TiendaPage() {
 
 /** -------- Componente con useSearchParams -------- */
 function TiendaInner() {
+  const router = useRouter();
   const sp = useSearchParams();
+
   const categoria = sp.get("categoria") || undefined;
   const genero = sp.get("genero") || undefined;       // para categoria=deportivo
   const tipoCalzado = sp.get("tipo") || undefined;    // para categoria=calzado
@@ -53,6 +55,24 @@ function TiendaInner() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [noMore, setNoMore] = useState(false);
+
+  // ===== helper para setear query params sin recargar =====
+  function setParams(next: Record<string, string | undefined>) {
+    const url = new URL(window.location.href);
+    Object.entries(next).forEach(([k, v]) => {
+      if (!v) url.searchParams.delete(k);
+      else url.searchParams.set(k, v);
+    });
+    // si cambiás categoría, limpiar subfiltros
+    const c = url.searchParams.get("categoria");
+    if (c !== "deportivo") url.searchParams.delete("genero");
+    if (c !== "calzado") url.searchParams.delete("tipo");
+
+    router.push(
+      url.pathname + (url.searchParams.toString() ? `?${url.searchParams}` : ""),
+      { scroll: false }
+    );
+  }
 
   // ---------- Query base (primera página) ----------
   const baseQuery: Query<DocumentData> = useMemo(() => {
@@ -220,12 +240,55 @@ function TiendaInner() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-8 md:py-12">
-        <header className="flex flex-wrap items-center justify-between gap-3 mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold">Tienda</h1>
+        <header className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold mb-3">Tienda</h1>
 
-          {/* Filtros */}
-          <div className="flex flex-col gap-2 w-full sm:w-auto">
-            {/* Categorías */}
+          {/* -------- Mobile: Selects -------- */}
+          <div className="sm:hidden space-y-3">
+            <Select
+              label="Categoría"
+              value={categoria || ""}
+              onChange={(v) => setParams({ categoria: v || undefined })}
+              options={[
+                { value: "", label: "Todas" },
+                { value: "deportivo", label: "Deportivo" },
+                { value: "calzado", label: "Calzado" },
+                { value: "bolsos", label: "Bolsos" },
+                { value: "mochilas", label: "Mochilas" },
+                { value: "accesorios", label: "Guantes y Accesorios" },
+                { value: "promos", label: "Promos" },
+              ]}
+            />
+
+            {categoria === "deportivo" && (
+              <Select
+                label="Filtro:"
+                value={genero || ""}
+                onChange={(v) => setParams({ categoria: "deportivo", genero: v || undefined })}
+                options={[
+                  { value: "", label: "Todos" },
+                  { value: "hombre", label: "Hombre" },
+                  { value: "mujer", label: "Mujer" },
+                ]}
+              />
+            )}
+
+            {categoria === "calzado" && (
+              <Select
+                label="Tipo de calzado"
+                value={tipoCalzado || ""}
+                onChange={(v) => setParams({ categoria: "calzado", tipo: v || undefined })}
+                options={[
+                  { value: "", label: "Todos" },
+                  { value: "deportivo", label: "Deportivo" },
+                  { value: "botitas_everlast", label: "Botitas Everlast" },
+                ]}
+              />
+            )}
+          </div>
+
+          {/* -------- Desktop: Chips (tu UI) -------- */}
+          <div className="hidden sm:flex flex-col gap-2">
             <div className="flex items-center gap-2 text-sm min-w-0">
               <span className="opacity-70 shrink-0">Categoría:</span>
               <div className="flex flex-wrap gap-2 max-w-full">
@@ -234,16 +297,14 @@ function TiendaInner() {
                 <Chip href="/tienda?categoria=calzado" active={categoria === "calzado"} label="Calzado" />
                 <Chip href="/tienda?categoria=bolsos" active={categoria === "bolsos"} label="Bolsos" />
                 <Chip href="/tienda?categoria=mochilas" active={categoria === "mochilas"} label="Mochilas" />
-                {/* NUEVA categoría */}
                 <Chip href="/tienda?categoria=accesorios" active={categoria === "accesorios"} label="Guantes y Accesorios" />
                 <Chip href="/tienda?categoria=promos" active={categoria === "promos"} label="Promos" />
               </div>
             </div>
 
-            {/* Género (solo deportivo) */}
             {categoria === "deportivo" && (
               <div className="flex items-center gap-2 text-sm">
-                <span className="opacity-70 shrink-0">Género:</span>
+                <span className="opacity-70 shrink-0">Filtros:</span>
                 <div className="flex flex-wrap gap-2">
                   <Chip href="/tienda?categoria=deportivo" active={!genero} label="Todos" />
                   <Chip href="/tienda?categoria=deportivo&genero=hombre" active={genero === "hombre"} label="Hombre" />
@@ -252,10 +313,9 @@ function TiendaInner() {
               </div>
             )}
 
-            {/* Tipo (solo calzado) */}
             {categoria === "calzado" && (
               <div className="flex items-center gap-2 text-sm">
-                <span className="opacity-70 shrink-0">Tipo:</span>
+                <span className="opacity-70 shrink-0">Filtros:</span>
                 <div className="flex flex-wrap gap-2">
                   <Chip href="/tienda?categoria=calzado" active={!tipoCalzado} label="Todos" />
                   <Chip
@@ -365,5 +425,34 @@ function Chip({ href, active, label }: { href: string; active: boolean; label: s
     >
       {label}
     </Link>
+  );
+}
+
+function Select({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <label className="block">
+      <span className="block text-sm mb-1 opacity-80">{label}</span>
+      <select
+        className="w-full rounded-lg border bg-white px-3 py-2"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }

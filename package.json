@@ -6,9 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "import:products": "node ./scripts/import-products.cjs"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "firebase": "^12.3.0",
     "firebase-admin": "^13.5.0",
     "jspdf": "^3.0.3",

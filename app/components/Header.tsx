@@ -104,11 +104,7 @@ export default function Header() {
             <div className="flex items-center justify-center gap-2">
               <InfoMenu compact />
               <NavPill href="/tienda" label="TIENDA" compact />
-              <NavPill
-                href="https://api.whatsapp.com/send?phone=3415075439&text=¡Hola!%20Vengo%20de%20la%20pagina%2C%20deseo%20mas%20informacion."
-                label="CONTACTO"
-                compact
-              />
+              <NavPill href="/contacto" label="QUIENES SOMOS" compact />
             </div>
           </div>
         </div>
