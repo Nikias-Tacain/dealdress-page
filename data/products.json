@@ -1,88 +1,62 @@
 [
-  {
-    "title": "Guantes Inyectados Premium Blancos/Dorados",
-    "price": 80000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitBlancosDorados.jpeg?alt=media&token=82103c2c-da7e-4642-a66f-8b544c6663e2",
-    "images": [
-      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitBlancosDorados2.jpeg?alt=media&token=657806ac-71e2-4d6c-84bf-944e2743699f"
-    ],
-    "description": "",
-    "category": "accesorios",
+    {
+    "title": "Botitas Everlast Clasicas",
+    "price": 60000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastBlancoVerde.jpeg?alt=media&token=75f2a8e5-7d42-4991-b828-b5fc35301ba8",
+    "description": "Botas EVERLAST ideales para deportes fitness, pesas boxeo moto y karting Cosidas y pegadas Su suela antideslizante es de goma especial para su agarre. Horma estandar y su ajuste es con cordones. Orificios para aireación",
+    "category": "calzado",
+    "shoeType": "botitas_everlast",
     "active": true,
-    "sizes": { "12": 3, "14": 6}
-  },
-  {
-    "title": "Guantes Inyectados Premium",
-    "price": 80000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitBlancosNegro.jpeg?alt=media&token=9ede8df1-ac99-4e7f-a99a-568b6af80ff2",
-    "images": [
-      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitBlancosNegro2.jpeg?alt=media&token=fe4413e8-9fa7-42ba-909f-84dd85e0164f"
-    ],
-    "description": "",
-    "category": "accesorios",
-    "active": true,
-    "sizes": { "12": 3, "14": 6}
-  },
-   {
-    "title": "Guantes Inyectados Premium",
-    "price": 80000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitBlancosRosa.jpeg?alt=media&token=b8191412-073b-458b-ae23-072fb2d5471f",
-    "description": "",
-    "category": "accesorios",
-    "active": true,
-    "sizes": { "12": 3, "14": 6}
-  },
-   {
-    "title": "Guantes Inyectados Premium",
-    "price": 80000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitNegros.jpeg?alt=media&token=02aa48c5-1f16-4f3f-b645-e713d07413d4",
-    "images": [
-      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitNegros2.jpeg?alt=media&token=03e0299b-c0e8-4772-8cb6-7ff2594cfb98"
-    ],
-    "description": "",
-    "category": "accesorios",
-    "active": true,
-    "sizes": { "12": 3, "14": 6}
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
   },
     {
-    "title": "Guantes Inyectados Premium",
-    "price": 80000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastClasicoNegroBlanco.jpeg?alt=media&token=5e220ff3-6b3e-42f4-abf1-6137fc2964b8",
-    "description": "",
-    "category": "accesorios",
+    "title": "Botitas Everlast Clasicas",
+    "price": 60000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastRojoNegro.jpeg?alt=media&token=162b27fa-30ea-4410-8414-cbbdc9c830b7",
+        "images": [
+      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastRojoNegro2.jpeg?alt=media&token=fa37956a-8428-44cc-8fdf-f929beb05d06"
+    ],
+    "description": "Botas EVERLAST ideales para deportes fitness, pesas boxeo moto y karting Cosidas y pegadas Su suela antideslizante es de goma especial para su agarre. Horma estandar y su ajuste es con cordones. Orificios para aireación",
+    "category": "calzado",
+    "shoeType": "botitas_everlast",
     "active": true,
-    "sizes": { "12": 3, "14": 6}
-  },
-    {
-    "title": "Guantes Inyectados Premium",
-    "price": 80000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitNegrosDorados.jpeg?alt=media&token=920a6926-d82d-4402-a59d-5e6a2f6ff3bd",
-    "description": "",
-    "category": "accesorios",
-    "active": true,
-    "sizes": { "12": 3, "14": 6}
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
   },
       {
-    "title": "Guantes Inyectados Premium",
-    "price": 80000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitNegrosRosas.jpeg?alt=media&token=8aaa6320-83f9-440a-941f-d7ef819435b1",
-    "description": "",
-    "category": "accesorios",
-    "active": true,
-    "sizes": { "12": 3, "14": 6}
-  },
-        {
-    "title": "Guantes Inyectados Premium",
-    "price": 80000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitRojos.jpeg?alt=media&token=326deeb2-29f2-4cf8-bf1f-3ac7231bbd84",
-    "images": [
-      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitRojos2.jpeg?alt=media&token=1761a04f-8cea-461e-8124-d3aca258ade0",
-      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FGuantesDragonsFitRojos3.jpeg?alt=media&token=87d5dad9-df53-42ca-b425-f70334cd1570"
+    "title": "Botitas Everlast Clasicas",
+    "price": 60000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastRosaVioleta.jpeg?alt=media&token=974c9511-8311-4d37-bede-a50a6fd91b77",
+        "images": [
+      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastRosaVioleta2.jpeg?alt=media&token=4181b57d-7e9e-4691-ad37-d2db1ab6fa48",
+      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastRosaVioleta3.jpeg?alt=media&token=fbb4c290-2334-4b91-b94b-53cdeae1d92b"
     ],
-    "description": "",
-    "category": "accesorios",
+    "description": "Botas EVERLAST ideales para deportes fitness, pesas boxeo moto y karting Cosidas y pegadas Su suela antideslizante es de goma especial para su agarre. Horma estandar y su ajuste es con cordones. Orificios para aireación",
+    "category": "calzado",
+    "shoeType": "botitas_everlast",
     "active": true,
-    "sizes": { "12": 3, "14": 6}
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+      {
+    "title": "Mochila 90LTS Campamento",
+    "price": 75000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FMochila90LTSNegra.jpeg?alt=media&token=f402441f-74b4-46c7-89de-4d5eea70cfe3",
+        "images": [
+      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FMochila90LTSNegra2.jpeg?alt=media&token=55ac4ed7-b771-4905-aad3-2505cd837902"
+    ],
+    "description": "Mochila 90LTS Campamento Senderismo Montaña",
+    "category": "mochilas",
+    "active": true
+  },
+      {
+    "title": "Mochila 90LTS Campamento",
+    "price": 75000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FMochila90LTSVerdeMilitar.jpeg?alt=media&token=73a5d623-7882-4d5e-a89e-a00d6229b154",
+        "images": [
+      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FMochila90LTSVerdeMilitar2.jpeg?alt=media&token=f948204d-5c59-48b7-81d2-eadf5d8ce6ee"
+    ],
+    "description": "Mochila 90LTS Campamento Senderismo Montaña",
+    "category": "mochilas",
+    "active": true
   }
 ]
 

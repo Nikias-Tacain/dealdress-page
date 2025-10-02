@@ -57,13 +57,10 @@ export default function Header() {
             </div>
 
             {/* Center: pills (desktop) */}
-            <div className="flex-1 hidden md:flex items-center justify-center gap-4">
-              <InfoMenu />
+            <div className="px-3 py-2 rounded-md text-white text-center md:flex gap-4 hidden">
+              <NavPill href="/contacto" label="QUIENES SOMOS" />
               <NavPill href="/tienda" label="TIENDA" />
-              <NavPill
-                href="https://api.whatsapp.com/send?phone=3415075439&text=¡Hola!%20Vengo%20de%20la%20pagina%2C%20deseo%20mas%20informacion."
-                label="CONTACTO"
-              />
+              <InfoMenu />
             </div>
 
             {/* Right: search + cart (AQUÍ los cambios) */}
@@ -102,9 +99,9 @@ export default function Header() {
           {/* Center: pills (mobile) */}
           <div className="md:hidden pb-3">
             <div className="flex items-center justify-center gap-2">
-              <InfoMenu compact />
-              <NavPill href="/tienda" label="TIENDA" compact />
               <NavPill href="/contacto" label="QUIENES SOMOS" compact />
+              <NavPill href="/tienda" label="TIENDA" compact />
+              <InfoMenu compact />
             </div>
           </div>
         </div>
