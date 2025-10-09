@@ -29,7 +29,7 @@ const categories: Category[] = [
   { id: "deportivo", title: "DEPORTIVO", image: "/categoria-deportivo.jpeg", href: "/tienda?categoria=deportivo" },
   { id: "calzado", title: "CALZADO", image: "/categoria-calzado.jpeg", href: "/tienda?categoria=calzado" },
   { id: "bolsos", title: "BOLSOS", image: "/categoria-bolsos.jpeg", href: "/tienda?categoria=bolsos" },
-  { id: "mochilas", title: "MOCHILAS", image: "/categoria-mochilas.jpeg", href: "/tienda?categoria=mochilas" },
+  { id: "botitasEverlast", title: "BOTITAS EVERLAST", image: "/categoria-everlast.jpeg", href: "/tienda?categoria=calzado&tipo=botitas_everlast" },
 ];
 
 export default function Home() {
@@ -68,7 +68,7 @@ export default function Home() {
 <section className="w-full">
   <div className="mx-auto max-w-[1100px]">
     <Image
-      src="/hero.svg"
+      src="/hero.jpeg"
       alt="Banner"
       width={1800}
       height={480}

@@ -282,6 +282,7 @@ function TiendaInner() {
                   { value: "", label: "Todos" },
                   { value: "deportivo", label: "Deportivo" },
                   { value: "botitas_everlast", label: "Botitas Everlast" },
+                  { value: "urbano", label: "Urbano" },
                 ]}
               />
             )}
@@ -327,6 +328,11 @@ function TiendaInner() {
                     href="/tienda?categoria=calzado&tipo=botitas_everlast"
                     active={tipoCalzado === "botitas_everlast"}
                     label="Botitas Everlast"
+                  />
+                  <Chip
+                    href="/tienda?categoria=calzado&tipo=urbano"
+                    active={tipoCalzado === "urbano"}
+                    label="Urbano"
                   />
                 </div>
               </div>

@@ -1,62 +1,196 @@
 [
     {
-    "title": "Botitas Everlast Clasicas",
-    "price": 60000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastBlancoVerde.jpeg?alt=media&token=75f2a8e5-7d42-4991-b828-b5fc35301ba8",
-    "description": "Botas EVERLAST ideales para deportes fitness, pesas boxeo moto y karting Cosidas y pegadas Su suela antideslizante es de goma especial para su agarre. Horma estandar y su ajuste es con cordones. Orificios para aireación",
+    "title": "Zapatillas Nike Air Zoom",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNikeDeportivoRosaNegro.jpeg?alt=media&token=fc0dbe0b-0953-4f0d-b600-ed445be7aab2",
+        "images": [
+      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNikeDeportivoRosaNegro2.jpeg?alt=media&token=93c7e913-f224-4f09-ba94-dd681d75d656"
+    ],
+    "description": "",
     "category": "calzado",
-    "shoeType": "botitas_everlast",
+    "shoeType": "deportivo",
     "active": true,
     "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
   },
     {
-    "title": "Botitas Everlast Clasicas",
-    "price": 60000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastRojoNegro.jpeg?alt=media&token=162b27fa-30ea-4410-8414-cbbdc9c830b7",
-        "images": [
-      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastRojoNegro2.jpeg?alt=media&token=fa37956a-8428-44cc-8fdf-f929beb05d06"
-    ],
-    "description": "Botas EVERLAST ideales para deportes fitness, pesas boxeo moto y karting Cosidas y pegadas Su suela antideslizante es de goma especial para su agarre. Horma estandar y su ajuste es con cordones. Orificios para aireación",
+    "title": "Zapatillas Nike Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNikeAirZoomRosaGris.jpeg?alt=media&token=e74486ea-a80d-4079-bc71-1e098e97d2e6",
+    "description": "",
     "category": "calzado",
-    "shoeType": "botitas_everlast",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+    {
+    "title": "Zapatillas Nike Air Zoom",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNikeAirZoomNegras.jpeg?alt=media&token=d25e7da1-cf5c-4bb3-ac1e-beb1fb37afe3",
+            "images": [
+      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNikeAirZoomNegras2.jpeg?alt=media&token=c0c8a6ba-170e-41ee-9aa2-8eb9bb45bba1"
+    ],
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
     "active": true,
     "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
   },
       {
-    "title": "Botitas Everlast Clasicas",
-    "price": 60000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastRosaVioleta.jpeg?alt=media&token=974c9511-8311-4d37-bede-a50a6fd91b77",
-        "images": [
-      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastRosaVioleta2.jpeg?alt=media&token=4181b57d-7e9e-4691-ad37-d2db1ab6fa48",
-      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoEverlast%2FEverlastRosaVioleta3.jpeg?alt=media&token=fbb4c290-2334-4b91-b94b-53cdeae1d92b"
-    ],
-    "description": "Botas EVERLAST ideales para deportes fitness, pesas boxeo moto y karting Cosidas y pegadas Su suela antideslizante es de goma especial para su agarre. Horma estandar y su ajuste es con cordones. Orificios para aireación",
+    "title": "Zapatillas Nike Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNikeAirZoomGrisRosa.jpeg?alt=media&token=b38fe644-459d-4d09-a44b-4b34d118c4a0",
+    "description": "",
     "category": "calzado",
-    "shoeType": "botitas_everlast",
+    "shoeType": "deportivo",
     "active": true,
     "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
   },
       {
-    "title": "Mochila 90LTS Campamento",
-    "price": 75000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FMochila90LTSNegra.jpeg?alt=media&token=f402441f-74b4-46c7-89de-4d5eea70cfe3",
-        "images": [
-      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FMochila90LTSNegra2.jpeg?alt=media&token=55ac4ed7-b771-4905-aad3-2505cd837902"
+    "title": "Zapatillas Nike Air Zoom",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNikeAirZoomBlancas.jpeg?alt=media&token=a7010cfa-f893-4626-974e-54156e2bd4bd",
+                "images": [
+      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNikeAirZoomBlancas2.jpeg?alt=media&token=4bcb1e23-9d9b-40fd-bd2d-1147b9754577",
+      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNikeAirZoomBlancas3.jpeg?alt=media&token=4e78ea02-e805-428a-a8a0-8a5e4e02320f"
     ],
-    "description": "Mochila 90LTS Campamento Senderismo Montaña",
-    "category": "mochilas",
-    "active": true
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
   },
       {
-    "title": "Mochila 90LTS Campamento",
-    "price": 75000,
-    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FMochila90LTSVerdeMilitar.jpeg?alt=media&token=73a5d623-7882-4d5e-a89e-a00d6229b154",
-        "images": [
-      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/GuantesAccesorios%2FMochila90LTSVerdeMilitar2.jpeg?alt=media&token=f948204d-5c59-48b7-81d2-eadf5d8ce6ee"
+    "title": "Zapatillas Nike Air Zoom",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNikeAirZoomAzules.jpeg?alt=media&token=bee77f12-4889-4c1b-9026-2ffe0f985fbf",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+      {
+    "title": "Zapatillas New Balance",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNewBalanceMarronBlanco.jpeg?alt=media&token=0d7446f2-e51a-4a8f-b4e5-4798bebdb120",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+      {
+    "title": "Zapatillas New Balance",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoNewBalanceAzules.jpeg?alt=media&token=7f31fe07-0e18-480b-b8a2-a66349128373",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+      {
+    "title": "Zapatillas Asics Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoAsicsCelestes.jpeg?alt=media&token=b8e0e210-708e-42b5-91c4-b4b7b914dd4c",
+                    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoAsicsCelestes2.jpeg?alt=media&token=dd096c51-e460-443f-9dd8-ddaba3b2971d"
     ],
-    "description": "Mochila 90LTS Campamento Senderismo Montaña",
-    "category": "mochilas",
-    "active": true
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+      {
+    "title": "Zapatillas Adidas Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoAdidasNegroAmarillo.jpeg?alt=media&token=186d9757-4721-4df9-b410-d5a2c37bab2f",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+      {
+    "title": "Zapatillas Adidas Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoAdidasDeportivoRosaBlanco.jpeg?alt=media&token=7d313c0f-bbe3-447f-b053-b6ae8975e1ad",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+        {
+    "title": "Zapatillas Adidas Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoAdidasDeportivoNegrasBlancas.jpeg?alt=media&token=408ae9b1-280d-4727-a510-92c3a8d89f88",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+        {
+    "title": "Zapatillas Adidas Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoAdidasDeportivoGris.jpeg?alt=media&token=a0f70534-c894-41e6-9d2a-0a115dc1a50f",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+        {
+    "title": "Zapatillas Adidas Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoAdidasDeportivoCeleste.jpeg?alt=media&token=5d1c1be6-a9da-4e35-92aa-0fef935b3ff6",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+        {
+    "title": "Zapatillas Adidas Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoAdidasDeportivoBlancasNegras.jpeg?alt=media&token=8852e4e2-c793-4be6-b334-0a54d7d16f3d",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+        {
+    "title": "Zapatillas Adidas Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoAdidasDeportivoAzulesGris.jpeg?alt=media&token=3c1f9952-85d0-4288-99c7-2348162f8e9d",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+        {
+    "title": "Zapatillas Adidas Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoAdidasDeportivoAzulesBlancas.jpeg?alt=media&token=7c38fed6-5671-40bb-9763-86acbdebaf29",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
+  },
+          {
+    "title": "Zapatillas Adidas Deportivas",
+    "price": 65000,
+    "image": "https://firebasestorage.googleapis.com/v0/b/dealdress-c9085.firebasestorage.app/o/CalzadoDeportivo%2FCalzadoAdidasDeportivoAzules.jpeg?alt=media&token=6ebc32d9-b5d5-4b58-9051-54c4929901b5",
+    "description": "",
+    "category": "calzado",
+    "shoeType": "deportivo",
+    "active": true,
+    "sizes": { "34": 3, "35": 6, "36": 3, "37": 6, "38": 3, "39": 6, "40": 6, "41": 3, "42": 6, "43": 6}
   }
 ]
 
